@@ -31,8 +31,12 @@ public class StatusBar : MonoBehaviour
     private void UpdateStatusBar()
     {
         int totalPopulation = GetTotalPopulation();
-        int totalInfected = GetTotalInfected();
-        int totalDead = GetTotalDead();
+        int totalInfected = Mathf.Max(0, GetTotalInfected());
+        int totalDead = Mathf.Max(0, GetTotalDead());
+        int totalHealthy = Mathf.Max(0, totalPopulation - totalInfected - totalDead);
+
+        // Affichage robuste: si les donnees sont desynchronisees, on normalise sur le plus grand total coherent.
+        int displayTotal = Mathf.Max(totalPopulation, totalInfected + totalDead + totalHealthy);
 
         // FORCER LES COULEURS BLANCHES POUR TOUS LES TEXTES
         if (infectedText != null)
@@ -66,15 +70,27 @@ public class StatusBar : MonoBehaviour
         deadText.text = $"Morts: {totalDead:N0}";
 
         // Calculer les taux
-        float infectionRate = totalPopulation > 0 
-            ? (float)totalInfected / totalPopulation 
+        float infectionRate = displayTotal > 0 
+            ? (float)totalInfected / displayTotal 
             : 0f;
         
-        float deathRate = totalPopulation > 0 
-            ? (float)totalDead / totalPopulation 
+        float deathRate = displayTotal > 0 
+            ? (float)totalDead / displayTotal 
             : 0f;
-        
-        float healthyRate = 1f - infectionRate - deathRate; // Sains = pop - infectés - morts
+
+        float healthyRate = displayTotal > 0
+            ? (float)totalHealthy / displayTotal
+            : 0f;
+
+        // Protection contre les erreurs d'arrondi: si la somme depasse 100%, on renormalise.
+        float sum = deathRate + infectionRate + healthyRate;
+        if (sum > 1f && sum > 0f)
+        {
+            deathRate /= sum;
+            infectionRate /= sum;
+            healthyRate /= sum;
+        }
+
         healthyRate = Mathf.Clamp01(healthyRate);
 
         // ORDRE: NOIR | ROUGE | BLEU (de gauche à droite)

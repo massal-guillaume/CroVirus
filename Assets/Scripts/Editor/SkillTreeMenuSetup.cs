@@ -86,9 +86,22 @@ public class SkillTreeMenuSetup
 
         var skillsBg = skillsArea.AddComponent<Image>();
         skillsBg.color = new Color(0.12f, 0.12f, 0.12f, 1f);
+        
+        // Red border around skills area (more flashy and thicker)
+        var skillsOutline = skillsArea.AddComponent<Outline>();
+        skillsOutline.effectColor = new Color(1f, 0.1f, 0.1f, 1f);  // Brighter red
+        skillsOutline.effectDistance = new Vector2(4f, 4f);  // Thicker border
+
+        // Add RectMask2D to skillsArea to clip all children at the border
+        var skillsAreaMask = skillsArea.AddComponent<RectMask2D>();
+        skillsAreaMask.softness = Vector2Int.zero;
 
         var connectionsLayer = CreateLayer(skillsArea.transform, "ConnectionsLayer");
         var nodesLayer = CreateLayer(skillsArea.transform, "NodesLayer");
+        
+        // Add RectMask2D to nodes layer for proper clipping at edges
+        var nodesMask = nodesLayer.gameObject.AddComponent<RectMask2D>();
+        nodesMask.softness = Vector2Int.zero;
 
         var infoPanel = new GameObject("InfoPanel");
         infoPanel.transform.SetParent(body.transform, false);
@@ -98,20 +111,26 @@ public class SkillTreeMenuSetup
         infoRect.offsetMin = new Vector2(10f, 0f);
         infoRect.offsetMax = Vector2.zero;
 
+        // Black background for info panel
         var infoBg = infoPanel.AddComponent<Image>();
-        infoBg.color = new Color(0.95f, 0.95f, 0.95f, 1f);
+        infoBg.color = new Color(0.05f, 0.05f, 0.05f, 1f);
+        
+        // Red border around info panel (more flashy and thicker)
+        var infoPanelOutline = infoPanel.AddComponent<Outline>();
+        infoPanelOutline.effectColor = new Color(1f, 0.1f, 0.1f, 1f);  // Brighter red
+        infoPanelOutline.effectDistance = new Vector2(4f, 4f);  // Thicker border
 
-        var infoTitle = CreateText(infoPanel.transform, "InfoTitle", "Transmission", 38, FontStyles.Bold, TextAlignmentOptions.TopLeft, Color.black);
+        // Title inside the panel (no separate header object)
+        var infoTitle = CreateText(infoPanel.transform, "SkillName", "Skill Name", 36, FontStyles.Bold, TextAlignmentOptions.TopLeft, Color.white);
         var infoTitleRect = infoTitle.GetComponent<RectTransform>();
         infoTitleRect.anchorMin = new Vector2(0f, 1f);
         infoTitleRect.anchorMax = new Vector2(1f, 1f);
         infoTitleRect.pivot = new Vector2(0.5f, 1f);
-        infoTitleRect.sizeDelta = new Vector2(0f, 70f);
-        infoTitleRect.anchoredPosition = new Vector2(0f, -15f);
-        infoTitleRect.offsetMin = new Vector2(16f, 0f);
+        infoTitleRect.sizeDelta = new Vector2(0f, 60f);
+        infoTitleRect.offsetMin = new Vector2(16f, -60f);
         infoTitleRect.offsetMax = new Vector2(-16f, 0f);
 
-        var infoDescription = CreateText(infoPanel.transform, "InfoDescription", "Selectionne un skill.", 24, FontStyles.Normal, TextAlignmentOptions.TopLeft, Color.black);
+        var infoDescription = CreateText(infoPanel.transform, "InfoDescription", "Selectionne un skill.", 22, FontStyles.Normal, TextAlignmentOptions.TopLeft, Color.white);
         var infoDescRect = infoDescription.GetComponent<RectTransform>();
         infoDescRect.anchorMin = new Vector2(0f, 0.26f);
         infoDescRect.anchorMax = new Vector2(1f, 0.88f);
@@ -120,15 +139,26 @@ public class SkillTreeMenuSetup
 
         var buyButton = CreateButton(infoPanel.transform, "BuyButton", "Acheter (0)", 30);
         var buyRect = buyButton.GetComponent<RectTransform>();
-        buyRect.anchorMin = new Vector2(0f, 0f);
-        buyRect.anchorMax = new Vector2(1f, 0f);
-        buyRect.pivot = new Vector2(0.5f, 0f);
-        buyRect.sizeDelta = new Vector2(0f, 86f);
-        buyRect.anchoredPosition = new Vector2(0f, 16f);
-        buyRect.offsetMin = new Vector2(16f, 16f);
-        buyRect.offsetMax = new Vector2(-16f, 16f);
+        buyRect.anchorMin = new Vector2(0.08f, 0.18f);
+        buyRect.anchorMax = new Vector2(0.92f, 0.30f);
+        buyRect.pivot = new Vector2(0.5f, 0.5f);
+        buyRect.offsetMin = Vector2.zero;
+        buyRect.offsetMax = Vector2.zero;
+
+        var buyImage = buyButton.GetComponent<Image>();
+        if (buyImage != null)
+            buyImage.color = new Color(0.68f, 0.68f, 0.68f, 1f);
+
+        var buyOutline = buyButton.gameObject.AddComponent<Outline>();
+        buyOutline.effectColor = Color.black;
+        buyOutline.effectDistance = new Vector2(2f, 2f);
 
         var buyLabel = buyButton.GetComponentInChildren<TextMeshProUGUI>();
+        if (buyLabel != null)
+        {
+            buyLabel.color = new Color(0.85f, 0.05f, 0.05f, 1f);
+            buyLabel.fontStyle = FontStyles.Bold;
+        }
 
         BindFields(script, rootCanvasGroup, closeButton, transmissionTab, mortaliteTab, specialTab,
             skillsAreaRect, connectionsLayer, nodesLayer, infoTitle, infoDescription, buyButton, buyLabel);

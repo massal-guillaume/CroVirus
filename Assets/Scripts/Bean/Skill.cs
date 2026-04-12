@@ -6,6 +6,7 @@ public class Skill
     public string id;                           // Unique identifier: "airborneL1", "seaL2", etc.
     public string name;                         // Display name: "Airborne Diarrhea"
     public string description;                  // Funny description
+    public string variableModified;             // What variable changes: "Votre virus devient plus résistant au chaud"
     public int cost;                            // Point cost (0 for free, changeable later)
     public int level;                           // 1 or 2
     public string category;                     // "Transport", "Climate", "Bathroom", "Dog", "Pet", "Fly", "Urine", "DrugResistance", "VaccineBypass"
@@ -15,12 +16,13 @@ public class Skill
     // Runtime state
     public bool isUnlocked = false;
     
-    public Skill(string id, string name, string description, int cost, int level, string category, 
+    public Skill(string id, string name, string description, string variableModified, int cost, int level, string category, 
                  List<string> dependencies, Dictionary<string, float> effects)
     {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.variableModified = variableModified;
         this.cost = cost;
         this.level = level;
         this.category = category;

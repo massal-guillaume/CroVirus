@@ -45,7 +45,7 @@ public class TransmissionService
             // Cap au nombre de personnes saines disponibles
             int healthy = pop.GetHealthy();
             newInfected = Mathf.Min(newInfected, healthy);
-            
+
             pop.infected += newInfected;
             
             if (newInfected > 0)
@@ -113,6 +113,22 @@ public class TransmissionService
 
     public static void SimulateMortality(List<CountryObject> countries, Virus virus)
     {
+        int worldTotal = 0;
+        int worldInfected = 0;
+        int worldDead = 0;
+
+        for (int i = 0; i < countries.Count; i++)
+        {
+            Population p = countries[i].population;
+            worldTotal += p.total;
+            worldInfected += p.infected;
+            worldDead += p.dead;
+        }
+
+        int worldHealthy = Mathf.Max(0, worldTotal - worldInfected - worldDead);
+        int worldLiving = Mathf.Max(0, worldTotal - worldDead);
+        bool allWorldLivingInfected = worldLiving > 0 && worldHealthy == 0;
+
         foreach (CountryObject country in countries)
         {
             Population pop = country.population;
@@ -140,22 +156,46 @@ public class TransmissionService
             
             // Mortalité étalée sur DAYS_TO_RECOVER pour plus de réalisme
             float mortalityValue = (pop.infected * effectiveLethality) / DAYS_TO_RECOVER;
-            
-            // BOOST à la toute fin: si 98%+ de la population est affectée (infectée + morte)
-            int affectedPopulation = pop.infected + pop.dead;
-            float affectionRatePerCountry = pop.total > 0 ? (float)affectedPopulation / pop.total : 0f;
-            
-            if (affectionRatePerCountry >= 0.98f)
+
+            // Effondrement global: quand toute la population vivante mondiale est infectee,
+            // le systeme sature et les morts/tour accelerent meme sans augmenter la letalite.
+            if (allWorldLivingInfected)
             {
-                mortalityValue *= 50f;  // 50x plus rapide à la toute fin
+                float deadRateWorld = worldTotal > 0 ? (float)worldDead / worldTotal : 0f;
+                float globalCollapseMultiplier = Mathf.Lerp(1.6f, 3.5f, deadRateWorld);
+                mortalityValue *= globalCollapseMultiplier;
+            }
+            
+            // BOOST de fin: actif seulement quand 98%+ de la population est morte
+            // ET qu'il ne reste aucun sain (donc 100% de la population est affectee).
+            float deadRatePerCountry = pop.total > 0 ? (float)pop.dead / pop.total : 0f;
+            bool allPopulationAffected = pop.GetHealthy() == 0 && pop.infected > 0;
+
+            if (deadRatePerCountry >= 0.98f && allPopulationAffected)
+            {
+                // Acceleration progressive entre 98% et 100% de morts.
+                float t = Mathf.InverseLerp(0.98f, 1.0f, deadRatePerCountry);
+                float endgameMultiplier = Mathf.Lerp(120f, 500f, t);
+                mortalityValue *= endgameMultiplier;
+
+                // Garantit au moins 1 mort/tour si des infectes restent, afin d'eviter une stagnation.
+                if (pop.infected > 0)
+                {
+                    mortalityValue = Mathf.Max(mortalityValue, 1f);
+                }
             }
             
             mortalityDecimals[country.name] += mortalityValue;
             
-            // Prendre les entiers
-            int newDeaths = (int)mortalityDecimals[country.name];
-            mortalityDecimals[country.name] -= newDeaths;  // Garder les décimales
-            
+            // Prendre les entiers sans perdre de "stock" de mortalite quand on cap au nb d'infectes.
+            int plannedDeaths = (int)mortalityDecimals[country.name];
+
+            // Ne jamais tuer plus d'infectes qu'il n'y en a.
+            int newDeaths = Mathf.Clamp(plannedDeaths, 0, pop.infected);
+
+            // Soustraire uniquement les morts effectivement appliquees.
+            mortalityDecimals[country.name] -= newDeaths;
+
             pop.dead += newDeaths;
             pop.infected = Mathf.Max(0, pop.infected - newDeaths);
             
