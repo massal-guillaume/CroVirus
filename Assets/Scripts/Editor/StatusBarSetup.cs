@@ -34,7 +34,7 @@ public class StatusBarSetup
             Object.DestroyImmediate(existingStatusBar);
         }
 
-        // Create StatusBar Panel - FIXE EN BAS
+        // Create StatusBar Panel - FIXE EN BAS (avec bordure noire)
         var statusBarGO = new GameObject("StatusBar");
         statusBarGO.transform.SetParent(canvas.transform, false);
         statusBarGO.AddComponent<RectTransform>();
@@ -43,18 +43,32 @@ public class StatusBarSetup
         statusBarRect.anchorMin = new Vector2(0, 0);  // En bas à gauche
         statusBarRect.anchorMax = new Vector2(1, 0);  // En bas à droite (stretch horizontal)
         statusBarRect.offsetMin = new Vector2(0, 0);
-        statusBarRect.offsetMax = new Vector2(0, 80); // Hauteur 80px
+        statusBarRect.offsetMax = new Vector2(0, 85); // Hauteur 85px (+ 5px bordure)
         
-        // Background image
+        // Background image BORDURE (NOIR)
         var bgImage = statusBarGO.AddComponent<Image>();
-        bgImage.color = new Color(0.1f, 0.1f, 0.15f, 0.95f); // Gris foncé semi-transparent
+        bgImage.color = new Color(0.05f, 0.05f, 0.05f, 1f); // NOIR pour bordure
 
         // Ajouter le script StatusBar
         var statusBarScript = statusBarGO.AddComponent<StatusBar>();
 
+        // ─── CONTENT PANEL (padding pour créer la bordure noire) ─────
+        var contentGO = new GameObject("Content");
+        contentGO.transform.SetParent(statusBarGO.transform, false);
+        
+        var contentRect = contentGO.AddComponent<RectTransform>();
+        contentRect.anchorMin = Vector2.zero;
+        contentRect.anchorMax = Vector2.one;
+        contentRect.offsetMin = new Vector2(3, 3);  // Padding 3px pour bordure noire
+        contentRect.offsetMax = new Vector2(-3, -3);
+
+        // Background du contenu (gris foncé comme avant)
+        var contentImage = contentGO.AddComponent<Image>();
+        contentImage.color = new Color(0.1f, 0.1f, 0.15f, 0.95f); // Gris foncé semi-transparent
+
         // ─── LEFT PANEL (Infectés) ───────────────────────────
         var leftGO = new GameObject("LeftPanel");
-        leftGO.transform.SetParent(statusBarGO.transform, false);
+        leftGO.transform.SetParent(contentGO.transform, false);
         
         var leftRect = leftGO.AddComponent<RectTransform>();
         leftRect.anchorMin = new Vector2(0, 0);
@@ -77,7 +91,7 @@ public class StatusBarSetup
 
         // ─── RIGHT PANEL (Morts) ────────────────────────────
         var rightGO = new GameObject("RightPanel");
-        rightGO.transform.SetParent(statusBarGO.transform, false);
+        rightGO.transform.SetParent(contentGO.transform, false);
         
         var rightRect = rightGO.AddComponent<RectTransform>();
         rightRect.anchorMin = new Vector2(0.7f, 0);
@@ -100,7 +114,7 @@ public class StatusBarSetup
 
         // ─── CENTER PROGRESS BAR ─────────────────────────────
         var centerContainerGO = new GameObject("ProgressContainer");
-        centerContainerGO.transform.SetParent(statusBarGO.transform, false);
+        centerContainerGO.transform.SetParent(contentGO.transform, false);
         
         var centerRect = centerContainerGO.AddComponent<RectTransform>();
         centerRect.anchorMin = new Vector2(0.3f, 0.25f);

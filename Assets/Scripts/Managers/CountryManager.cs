@@ -10,11 +10,20 @@ public static class CountryManager
     {
         if (initialized) return;
 
-        // Créer les 3 pays de départ avec températures moyennes (Celsius)
+        // Créer les 3 pays de départ avec paramètres complets
         countries.Clear();
-        countries.Add(new CountryObject("France", 67000000, 13f));       // ~13°C en moyenne
-        countries.Add(new CountryObject("Germany", 83000000, 9f));       // ~9°C en moyenne
-        countries.Add(new CountryObject("Italy", 58000000, 15f));        // ~15°C en moyenne
+        
+        // France: Riche, bonne hygiène, système de santé bon, climat tempéré
+        var france = new CountryObject("France", 67000000, 13f, 0.90f, 0.85f, 0.85f, "Temperate");
+        countries.Add(france);
+        
+        // Germany: Très riche, très bonne hygiène, système de santé excellent, climat tempéré
+        var germany = new CountryObject("Germany", 83000000, 9f, 0.92f, 0.88f, 0.90f, "Temperate");
+        countries.Add(germany);
+        
+        // Italy: Riche, hygiène modérée, système de santé bon, climat méditerranéen
+        var italy = new CountryObject("Italy", 58000000, 15f, 0.80f, 0.75f, 0.80f, "Mediterranean");
+        countries.Add(italy);
 
         initialized = true;
         Debug.Log($"CountryManager initialisé avec {countries.Count} pays");

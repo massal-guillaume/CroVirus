@@ -23,6 +23,9 @@ public class TransmissionService
             // Calculer l'effet température sur l'efficacité du virus
             float temperatureEffect = CalculateTemperatureEffect(country.averageTemperature, virus);
             
+            // Calculer les modificateurs du virus selon les skills
+            float transmissionModifier = CalculateTransmissionModifier(virus, country);
+            
             // Accumulateur de décimales pour chaque pays
             if (!infectionDecimals.ContainsKey(country.name))
                 infectionDecimals[country.name] = 0f;
@@ -30,9 +33,9 @@ public class TransmissionService
             // Approche réaliste par personne:
             // Chaque infecté contacte CONTACTS_PER_INFECTED_PER_DAY personnes
             // Chaque contact a BASE_TRANSMISSION_PROBABILITY de transmettre
-            // Affecté par température et variabilité
+            // Affecté par température, skills, et variabilité
             float variability = Random.Range(1f - VARIABILITY, 1f + VARIABILITY);
-            float newInfectionValue = infected * CONTACTS_PER_INFECTED_PER_DAY * BASE_TRANSMISSION_PROBABILITY * temperatureEffect * variability;
+            float newInfectionValue = infected * CONTACTS_PER_INFECTED_PER_DAY * BASE_TRANSMISSION_PROBABILITY * temperatureEffect * transmissionModifier * variability;
             infectionDecimals[country.name] += newInfectionValue;
             
             // Prendre les entiers
@@ -46,8 +49,36 @@ public class TransmissionService
             pop.infected += newInfected;
             
             if (newInfected > 0)
-                Debug.Log($"  [{country.name}] +{newInfected} infectés (contacts×prob×temp = {CONTACTS_PER_INFECTED_PER_DAY}×{BASE_TRANSMISSION_PROBABILITY:F2}×{temperatureEffect:F2}×{variability:F2}, accumulated: {infectionDecimals[country.name]:F2})");
+                Debug.Log($"  [{country.name}] +{newInfected} infectés (temp×skills = {temperatureEffect:F2}×{transmissionModifier:F2}, accumulated: {infectionDecimals[country.name]:F2})");
         }
+    }
+    
+    /// <summary>
+    /// Calculate transmission modifier based on virus skills and country parameters
+    /// </summary>
+    private static float CalculateTransmissionModifier(Virus virus, CountryObject country)
+    {
+        float modifier = 1f;
+        
+        // Transport modifiers (avg of available transports)
+        float transportBonus = (virus.airborneModifier + virus.seaModifier + virus.landModifier) / 3f;
+        modifier += transportBonus;
+        
+        // Vector modifiers (disease vectors boost transmission)
+        float vectorBonus = (virus.dogModifier + virus.petModifier + virus.flyModifier + virus.urineModifier) / 4f;
+        modifier += vectorBonus;
+        
+        // Hygiene exploitation: countries with poor hygiene are more vulnerable
+        // (1 - hygiene) means low-hygiene countries get full bonus
+        float hygieneVulnerability = (1f - country.hygiene) * virus.hygieneExploitation;
+        modifier += hygieneVulnerability;
+        
+        // Wealth exploitation: paradoxically, wealthy countries can be vulnerable too
+        // (applies if wealth is high and virus has wealth exploitation)
+        float wealthVulnerability = country.wealth * virus.wealthExploitation;
+        modifier += wealthVulnerability;
+        
+        return Mathf.Max(modifier, 0.1f);  // Never go below 10% (floor to prevent division by zero issues)
     }
 
     // Calculer l'efficacité du virus basé sur la température
@@ -90,8 +121,25 @@ public class TransmissionService
             if (!mortalityDecimals.ContainsKey(country.name))
                 mortalityDecimals[country.name] = 0f;
             
+            // Virus drug resistance: virus fights antiviral treatments (increases lethality)
+            // Country drug resistance: country healthcare system fights virus (decreases lethality)
+            float drugFactor = (1f + virus.drugResistance) / (1f + country.drugResistance);
+            
+            // Virus immunity bypass: chance to ignore natural human genetic immunity
+            // If bypass succeeds, immunity provides no protection
+            float immunityFactor = 1f;
+            if (Random.value >= virus.immunityBypass)
+            {
+                // Immunity bypass failed - country immunity protects population
+                immunityFactor = 1f - country.immunity;  // Low immunity = higher lethality
+            }
+            // else: bypass succeeded - immunity has no effect (immunityFactor stays 1.0)
+            
+            // Final lethality = base × drug combat × immunity combat
+            float effectiveLethality = virus.lethality * drugFactor * immunityFactor;
+            
             // Mortalité étalée sur DAYS_TO_RECOVER pour plus de réalisme
-            float mortalityValue = (pop.infected * virus.lethality) / DAYS_TO_RECOVER;
+            float mortalityValue = (pop.infected * effectiveLethality) / DAYS_TO_RECOVER;
             
             // BOOST à la toute fin: si 98%+ de la population est affectée (infectée + morte)
             int affectedPopulation = pop.infected + pop.dead;
@@ -112,7 +160,7 @@ public class TransmissionService
             pop.infected = Mathf.Max(0, pop.infected - newDeaths);
             
             if (newDeaths > 0)
-                Debug.Log($"  [{country.name}] -{newDeaths} morts (accumulated: {mortalityDecimals[country.name]:F2})");
+                Debug.Log($"  [{country.name}] -{newDeaths} morts (drug:{drugFactor:F2}×immunity:{immunityFactor:F2}={effectiveLethality:F2} bypass:{virus.immunityBypass:P0}, accumulated: {mortalityDecimals[country.name]:F2})");
         }
     }
 

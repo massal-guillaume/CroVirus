@@ -13,12 +13,43 @@ public class GameManager : MonoBehaviour
     private float simulationSpeed = 1f;  // Tours par seconde
     private bool isPaused = false;  // État de pause de la simulation
     private GameState gameState = GameState.Playing;  // État du jeu
+    private PointManager pointManager;
+    private SkillTreeManager skillTreeManager;
 
 
     void Start()
     {
+        // Initialiser PointManager
+        InitializePointManager();
+        // Initialiser SkillTreeManager
+        InitializeSkillTreeManager();
+        // Initialiser le jeu
         InitializeGame();
         CommandManager.Initialize(this);
+    }
+
+    private void InitializePointManager()
+    {
+        pointManager = FindObjectOfType<PointManager>();
+        if (pointManager == null)
+        {
+            GameObject pointManagerObj = new GameObject("PointManager");
+            pointManager = pointManagerObj.AddComponent<PointManager>();
+        }
+        pointManager.Initialize();
+        Debug.Log("PointManager initialisé");
+    }
+    
+    private void InitializeSkillTreeManager()
+    {
+        skillTreeManager = FindObjectOfType<SkillTreeManager>();
+        if (skillTreeManager == null)
+        {
+            GameObject skillTreeObj = new GameObject("SkillTreeManager");
+            skillTreeManager = skillTreeObj.AddComponent<SkillTreeManager>();
+        }
+        skillTreeManager.Initialize(pointManager, this);
+        Debug.Log("SkillTreeManager initialisé");
     }
 
     void Update()
@@ -98,6 +129,14 @@ public class GameManager : MonoBehaviour
         TransmissionService.SimulateInterCountrySpread(countries);
         TransmissionService.SimulateMortality(countries, virus);
         PrintStatus();
+        
+        // Générer les points passifs basés sur infections et morts
+        int totalInfected = TransmissionService.GetTotalInfected(countries);
+        int totalDead = TransmissionService.GetTotalDead(countries);
+        if (pointManager != null)
+        {
+            pointManager.GeneratePoints(totalInfected, totalDead);
+        }
         
         // Vérifier les conditions de victoire/défaite
         CheckGameConditions();
