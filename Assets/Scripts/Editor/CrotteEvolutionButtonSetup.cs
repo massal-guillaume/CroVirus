@@ -36,16 +36,19 @@ public class CrotteEvolutionButtonSetup
         buttonGO.transform.SetParent(canvas.transform, false);
 
         var buttonRect = buttonGO.AddComponent<RectTransform>();
-        buttonRect.anchorMin = new Vector2(0, 1);
-        buttonRect.anchorMax = new Vector2(0, 1);
-        buttonRect.pivot = new Vector2(0, 1);
-        buttonRect.sizeDelta = new Vector2(300, 80);
-        buttonRect.anchoredPosition = new Vector2(340, -20);
-
-        PositionRightOfPointsDisplay(buttonRect);
+        buttonRect.anchorMin = new Vector2(1, 1);
+        buttonRect.anchorMax = new Vector2(1, 1);
+        buttonRect.pivot = new Vector2(1, 1);
+        buttonRect.sizeDelta = new Vector2(390, 72);
+        buttonRect.anchoredPosition = new Vector2(-20, -20);
 
         var borderImage = buttonGO.AddComponent<Image>();
         borderImage.color = new Color(1f, 0.1f, 0.1f, 1f);
+
+        // Safety border so the red frame stays clearly visible at any scale.
+        var borderOutline = buttonGO.AddComponent<Outline>();
+        borderOutline.effectColor = new Color(1f, 0.1f, 0.1f, 1f);
+        borderOutline.effectDistance = new Vector2(1f, 1f);
 
         var button = buttonGO.AddComponent<Button>();
         button.targetGraphic = borderImage;
@@ -58,11 +61,11 @@ public class CrotteEvolutionButtonSetup
         var contentRect = contentGO.AddComponent<RectTransform>();
         contentRect.anchorMin = Vector2.zero;
         contentRect.anchorMax = Vector2.one;
-        contentRect.offsetMin = new Vector2(3, 3);
-        contentRect.offsetMax = new Vector2(-3, -3);
+        contentRect.offsetMin = new Vector2(2, 2);
+        contentRect.offsetMax = new Vector2(-2, -2);
 
         var contentImage = contentGO.AddComponent<Image>();
-        contentImage.color = Color.white;
+        contentImage.color = new Color(0.13f, 0.13f, 0.13f, 1f);
 
         var labelGO = new GameObject("Label");
         labelGO.transform.SetParent(contentGO.transform, false);
@@ -70,15 +73,34 @@ public class CrotteEvolutionButtonSetup
         var labelRect = labelGO.AddComponent<RectTransform>();
         labelRect.anchorMin = Vector2.zero;
         labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = new Vector2(8, 0);
-        labelRect.offsetMax = new Vector2(-8, 0);
+        labelRect.offsetMin = new Vector2(15, 0);
+        labelRect.offsetMax = new Vector2(-15, 0);
+        labelRect.anchoredPosition = new Vector2(0f, -4f);
 
         var label = labelGO.AddComponent<TextMeshProUGUI>();
-        label.text = "CrotteEvolution";
-        label.fontSize = 28;
+        label.text = "Menu\nCrotte Virus Evolution";
+        label.enableAutoSizing = false;
+        label.fontSize = 26;
         label.fontStyle = FontStyles.Bold;
         label.alignment = TextAlignmentOptions.Center;
-        label.color = Color.black;
+        label.enableWordWrapping = true;
+        label.lineSpacing = 20;
+        label.color = Color.white;
+        label.outlineWidth = 0.10f;
+        label.outlineColor = new Color(1f, 0.1f, 0.1f, 1f);
+
+        // Keep same visual style as points display in all states.
+        var colors = button.colors;
+        colors.normalColor        = new Color(0.13f, 0.13f, 0.13f, 1f);
+        colors.highlightedColor   = new Color(0.13f, 0.13f, 0.13f, 1f);
+        colors.pressedColor       = new Color(0.13f, 0.13f, 0.13f, 1f);
+        colors.selectedColor      = new Color(0.13f, 0.13f, 0.13f, 1f);
+        colors.disabledColor      = new Color(0.3f,  0.3f,  0.3f,  0.5f);
+        colors.colorMultiplier    = 1f;
+        colors.fadeDuration       = 0.1f;
+        button.colors = colors;
+        button.targetGraphic = contentImage;
+
 
         button.onClick.RemoveAllListeners();
         UnityEventTools.AddPersistentListener(button.onClick, buttonScript.OpenSkillTreeMenu);
@@ -86,20 +108,5 @@ public class CrotteEvolutionButtonSetup
 
         EditorSceneManager.SaveScene(mainScene);
         Debug.Log("✅ CrotteEvolution button created next to Crotogenes.");
-    }
-
-    private static void PositionRightOfPointsDisplay(RectTransform buttonRect)
-    {
-        var pointsDisplayGO = GameObject.Find("PointsDisplay");
-        if (pointsDisplayGO == null)
-            return;
-
-        var pointsRect = pointsDisplayGO.GetComponent<RectTransform>();
-        if (pointsRect == null)
-            return;
-
-        float x = pointsRect.anchoredPosition.x + pointsRect.sizeDelta.x + 15f;
-        float y = pointsRect.anchoredPosition.y;
-        buttonRect.anchoredPosition = new Vector2(x, y);
     }
 }

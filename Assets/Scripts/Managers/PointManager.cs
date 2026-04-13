@@ -11,6 +11,7 @@ public class PointManager : MonoBehaviour
     // Formule: Log10(Infectés + 1) × 0.1 + Log10(Morts + 1) × 0.15
     private const float INFECTED_MULTIPLIER = 0.1f;
     private const float DEAD_MULTIPLIER = 0.15f;
+    private float pointMultiplier = 1.0f;  // Classique N3: Prime Coprogène
 
     void Awake()
     {
@@ -33,6 +34,13 @@ public class PointManager : MonoBehaviour
     {
         currentPoints = 0;
         totalPointsEarned = 0;
+        pointMultiplier = 1.0f;
+    }
+
+    public void ApplyPointMultiplier(float multiplier)
+    {
+        pointMultiplier = Mathf.Max(0.1f, multiplier);
+        Debug.Log($"[PointManager] Multiplicateur de points appliqué: x{pointMultiplier:F2}");
     }
 
     /// <summary>
@@ -44,15 +52,15 @@ public class PointManager : MonoBehaviour
         float infectedPoints = Mathf.Log10(totalInfected + 1) * INFECTED_MULTIPLIER;
         float deadPoints = Mathf.Log10(totalDead + 1) * DEAD_MULTIPLIER;
         
-        float totalPointsThisTurn = infectedPoints + deadPoints;
+        float totalPointsThisTurn = (infectedPoints + deadPoints) * pointMultiplier;
         int pointsToAdd = Mathf.FloorToInt(totalPointsThisTurn);
 
         if (pointsToAdd > 0)
         {
             currentPoints += pointsToAdd;
             totalPointsEarned += pointsToAdd;
-            
-            Debug.Log($"  [POINTS] +{pointsToAdd} pts (Infected: {infectedPoints:F2}, Dead: {deadPoints:F2}) | Total: {currentPoints}");
+
+            Debug.Log($"  [POINTS] +{pointsToAdd} pts (Infected: {infectedPoints:F2}, Dead: {deadPoints:F2}, Mult: x{pointMultiplier:F2}) | Total: {currentPoints}");
         }
     }
 

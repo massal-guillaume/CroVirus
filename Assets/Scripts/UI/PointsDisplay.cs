@@ -40,8 +40,9 @@ public class PointsDisplay : MonoBehaviour
         // Appliquer outline une seule fois
         if (!outlineApplied)
         {
-            pointsText.outlineWidth = 0.2f;
-            pointsText.outlineColor = Color.black;
+            pointsText.color = Color.white;
+            pointsText.outlineWidth = 0.15f;
+            pointsText.outlineColor = new Color(1f, 0.1f, 0.1f, 1f);
             outlineApplied = true;
         }
 

@@ -47,7 +47,7 @@ public class PointsDisplaySetup
         
         // Background image (BORDURE ROUGE INTENSE)
         var bgImage = pointsDisplayGO.AddComponent<Image>();
-        bgImage.color = new Color(1f, 0.1f, 0.1f, 1f); // ROUGE INTENSE pour bordure
+        bgImage.color = new Color(1f, 0.1f, 0.1f, 1f); // ROUGE INTENSE pour bordure — DA skill tree
 
         // Ajouter le script PointsDisplay
         var pointsDisplayScript = pointsDisplayGO.AddComponent<PointsDisplay>();
@@ -62,9 +62,9 @@ public class PointsDisplaySetup
         contentRect.offsetMin = new Vector2(3, 3);  // Padding 3px pour bordure rouge
         contentRect.offsetMax = new Vector2(-3, -3);
 
-        // Background du contenu (BLANC)
+        // Background du contenu (DARK — DA skill tree)
         var contentImage = contentGO.AddComponent<Image>();
-        contentImage.color = Color.white;  // BLANC
+        contentImage.color = new Color(0.08f, 0.08f, 0.08f, 1f);
 
         // ─── POINTS TEXT ─────────────────────────────────────
         var pointsTextGO = new GameObject("PointsText");
@@ -79,12 +79,12 @@ public class PointsDisplaySetup
         var pointsText = pointsTextGO.AddComponent<TextMeshProUGUI>();
         pointsText.text = "Crotogènes: Points";
         pointsText.fontSize = 32;
-        pointsText.color = Color.black;  // NOIR
+        pointsText.color = Color.white;  // BLANC — DA skill tree
         pointsText.fontStyle = FontStyles.Bold;
         pointsText.alignment = TextAlignmentOptions.MidlineLeft;
         pointsText.lineSpacing = 100;
-        pointsText.outlineWidth = 0.2f;  // Outline pour effet bold plus prononcé
-        pointsText.outlineColor = Color.black;
+        pointsText.outlineWidth = 0.15f;
+        pointsText.outlineColor = new Color(1f, 0.1f, 0.1f, 1f);  // Outline rouge — DA skill tree
 
         // Assigner la référence au script via Reflection
         var pointsTextField = typeof(PointsDisplay).GetField("pointsText",

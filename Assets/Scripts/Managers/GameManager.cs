@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum GameState { Playing, Victory, Defeat }
+public enum GameState { Playing, Victory, Defeat, Healed }
 
 public class GameManager : MonoBehaviour
 {
     public List<CountryObject> countries = new List<CountryObject>();
     public Virus virus;
+    public VirusType currentVirusType = VirusType.Cacastellaire;
     public int currentTurn = 0;
     private float timeSinceLastTurn = 0f;
     private float simulationSpeed = 1f;  // Tours par seconde
@@ -23,9 +24,13 @@ public class GameManager : MonoBehaviour
         InitializePointManager();
         // Initialiser SkillTreeManager
         InitializeSkillTreeManager();
-        // Initialiser le jeu
-        InitializeGame();
-        CommandManager.Initialize(this);
+        // Laisser le joueur choisir son virus, puis initialiser le jeu
+        VirusSelectionPanel.Show(chosenType =>
+        {
+            currentVirusType = chosenType;
+            InitializeGame();
+            CommandManager.Initialize(this);
+        });
     }
 
     private void InitializePointManager()
@@ -66,6 +71,9 @@ public class GameManager : MonoBehaviour
 
         timeSinceLastTurn += Time.deltaTime;
         
+        if (virus == null || countries == null || countries.Count == 0)
+            return;
+
         if (timeSinceLastTurn >= 1f / simulationSpeed)
         {
             SimulateTurn();
@@ -115,6 +123,10 @@ public class GameManager : MonoBehaviour
         // Infecter le premier pays
         countries[0].population.infected = 1;
 
+        // Le timing exact du trigger sera défini plus tard.
+        // Pour l'instant, désactivé par défaut.
+        virus.isVaccineResearchActive = false;
+
         Debug.Log("=== JEU COMMENCÉ ===");
         PrintStatus();
     }
@@ -128,6 +140,22 @@ public class GameManager : MonoBehaviour
         TransmissionService.SimulateSpread(countries, virus);
         TransmissionService.SimulateInterCountrySpread(countries);
         TransmissionService.SimulateMortality(countries, virus);
+        VaccineService.SimulatePreparation(countries, virus);
+        int newVaccinated = VaccineService.SimulateSpread(countries, virus);
+        if (newVaccinated > 0)
+        {
+            Debug.Log($"  [Vaccin] +{newVaccinated} vaccinés ce tour (préparation: {virus.vaccinePreparationProgress:F1}%)");
+        }
+
+        // Auto-unlock skills from Special virus bonuses
+        if (skillTreeManager != null)
+        {
+            if (virus.autoTransmissionSkillChance > 0f || virus.autoTransmissionSkillTurnsLeft > 0)
+                skillTreeManager.TryAutoUnlockTransmissionSkill(virus);
+
+            if (virus.autoLethalSymptomChance > 0f || virus.autoLethalSymptomTurnsLeft > 0)
+                skillTreeManager.TryAutoUnlockLethalSymptom(virus);
+        }
         PrintStatus();
         
         // Générer les points passifs basés sur infections et morts
@@ -154,7 +182,8 @@ public class GameManager : MonoBehaviour
 
         int totalInfected = TransmissionService.GetTotalInfected(countries);
         int totalDead = TransmissionService.GetTotalDead(countries);
-        Debug.Log($"\nTOTAL: Infectés = {totalInfected} | Morts = {totalDead}");
+        int totalVaccinated = VaccineService.GetTotalVaccinated(countries);
+        Debug.Log($"\nTOTAL: Infectés = {totalInfected} | Morts = {totalDead} | Vaccinés = {totalVaccinated} | Préparation vaccin = {virus.vaccinePreparationProgress:F1}%");
     }
 
     // === CONDITIONS DE VICTOIRE/DÉFAITE ===
@@ -166,8 +195,17 @@ public class GameManager : MonoBehaviour
 
         int totalInfected = TransmissionService.GetTotalInfected(countries);
         int totalDead = TransmissionService.GetTotalDead(countries);
+        int totalVaccinated = VaccineService.GetTotalVaccinated(countries);
         int totalPopulation = GetTotalPopulation();
         int totalAlive = totalPopulation - totalDead;
+
+        // FIN VACCIN: campagne terminée, toute la population vivante est vaccinée.
+        if (totalAlive > 0 && totalVaccinated >= totalAlive)
+        {
+            gameState = GameState.Healed;
+            Debug.Log("\n=== DÉFAITE! Le vaccin a sauvé toute la population vivante. ===");
+            return;
+        }
 
         // VICTOIRE: Tout le monde est mort
         if (totalAlive == 0)

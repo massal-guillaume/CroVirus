@@ -4,7 +4,7 @@ using UnityEngine;
 public class TransmissionService
 {
     // Paramètres de transmission - Approche réaliste par personne
-    private const int DAYS_TO_RECOVER = 10;  // Infectés restent infectés 10 jours
+    private const int DAYS_TO_RECOVER = 7;  // Infectés restent infectés 7 jours
     private const float CONTACTS_PER_INFECTED_PER_DAY = 1.5f;  // Chaque infecté contacte 1.5 personnes
     private const float BASE_TRANSMISSION_PROBABILITY = 0.10f;  // 10% chance par contact
     private const float VARIABILITY = 0.3f; // ±30% variabilité
@@ -150,9 +150,51 @@ public class TransmissionService
                 immunityFactor = 1f - country.immunity;  // Low immunity = higher lethality
             }
             // else: bypass succeeded - immunity has no effect (immunityFactor stays 1.0)
+
+            // Mortalite skill conditions (low-intensity profile):
+            // - Anus (mortalityRate): stronger in cold countries
+            // - Poumon (respiratoryDamage): stronger in hot or arid countries
+            // - Bouffe (foodContamination): stronger with low hygiene, boosted when hot
+            // - Cerveau (mentalDamage): only active in rich countries
+            bool isColdCountry = country.averageTemperature <= 8f;
+            bool isHotCountry = country.averageTemperature >= 28f;
+            bool isLowHygiene = country.hygiene <= 0.45f;
+            bool isRichCountry = country.wealth >= 0.70f;
+
+            string climate = string.IsNullOrEmpty(country.climateType) ? "" : country.climateType.ToLowerInvariant();
+            bool isAridClimate = climate.Contains("arid") || climate.Contains("desert") || climate.Contains("dry");
+
+            float anusBonus = virus.mortalityRate * (isColdCountry ? 0.08f : 0.03f);
+            anusBonus = Mathf.Clamp(anusBonus, 0f, 0.10f);
+
+            float poumonBonus = 0f;
+            if (isHotCountry || isAridClimate)
+                poumonBonus = virus.respiratoryDamage * 0.05f;
+            else
+                poumonBonus = virus.respiratoryDamage * 0.01f;
+            poumonBonus = Mathf.Clamp(poumonBonus, 0f, 0.06f);
+
+            float bouffeBonus = 0f;
+            if (isLowHygiene)
+            {
+                float warmBoost = isHotCountry ? 1.30f : 1f;
+                bouffeBonus = virus.foodContamination * 0.05f * warmBoost;
+            }
+            else
+            {
+                bouffeBonus = virus.foodContamination * 0.01f;
+            }
+            bouffeBonus = Mathf.Clamp(bouffeBonus, 0f, 0.06f);
+
+            float cerveauBonus = isRichCountry ? virus.mentalDamage * 0.06f : 0f;
+            cerveauBonus = Mathf.Clamp(cerveauBonus, 0f, 0.08f);
+
+            float skillBonus = anusBonus + poumonBonus + bouffeBonus + cerveauBonus;
+            skillBonus = Mathf.Clamp(skillBonus, 0f, 0.18f);
             
             // Final lethality = base × drug combat × immunity combat
-            float effectiveLethality = virus.lethality * drugFactor * immunityFactor;
+            float baseLethality = virus.lethality * drugFactor * immunityFactor;
+            float effectiveLethality = Mathf.Clamp01(baseLethality + skillBonus);
             
             // Mortalité étalée sur DAYS_TO_RECOVER pour plus de réalisme
             float mortalityValue = (pop.infected * effectiveLethality) / DAYS_TO_RECOVER;
@@ -200,7 +242,7 @@ public class TransmissionService
             pop.infected = Mathf.Max(0, pop.infected - newDeaths);
             
             if (newDeaths > 0)
-                Debug.Log($"  [{country.name}] -{newDeaths} morts (drug:{drugFactor:F2}×immunity:{immunityFactor:F2}={effectiveLethality:F2} bypass:{virus.immunityBypass:P0}, accumulated: {mortalityDecimals[country.name]:F2})");
+                Debug.Log($"  [{country.name}] -{newDeaths} morts (base:{baseLethality:F3} + bonus:{skillBonus:F3} [anus:{anusBonus:F3} poumon:{poumonBonus:F3} bouffe:{bouffeBonus:F3} cerveau:{cerveauBonus:F3}] => {effectiveLethality:F3}, cond:cold={isColdCountry},hot={isHotCountry},arid={isAridClimate},lowHyg={isLowHygiene},rich={isRichCountry}, bypass:{virus.immunityBypass:P0}, accumulated:{mortalityDecimals[country.name]:F2})");
         }
     }
 

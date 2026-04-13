@@ -11,13 +11,16 @@ public class Skill
     public int level;                           // 1 or 2
     public string category;                     // "Transport", "Climate", "Bathroom", "Dog", "Pet", "Fly", "Urine", "DrugResistance", "VaccineBypass"
     public List<string> dependencies;           // Other skills that must be unlocked first (e.g., ["airborneL1"] for L2)
+    public List<string> anyDependency;          // At least ONE of these must be unlocked (OR condition for N3 after N2 choice)
+    public List<string> mutuallyExclusiveWith;  // Skills that block this one if already purchased (exclusive choice)
     public Dictionary<string, float> effects;   // What virus stats this skill affects
     
     // Runtime state
     public bool isUnlocked = false;
     
     public Skill(string id, string name, string description, string variableModified, int cost, int level, string category, 
-                 List<string> dependencies, Dictionary<string, float> effects)
+                 List<string> dependencies, Dictionary<string, float> effects,
+                 List<string> mutuallyExclusiveWith = null, List<string> anyDependency = null)
     {
         this.id = id;
         this.name = name;
@@ -28,6 +31,8 @@ public class Skill
         this.category = category;
         this.dependencies = dependencies ?? new List<string>();
         this.effects = effects ?? new Dictionary<string, float>();
+        this.mutuallyExclusiveWith = mutuallyExclusiveWith ?? new List<string>();
+        this.anyDependency = anyDependency ?? new List<string>();
     }
     
     /// <summary>
@@ -39,7 +44,7 @@ public class Skill
     }
     
     /// <summary>
-    /// Check if all dependencies are unlocked
+    /// Check if all dependencies are unlocked and no exclusive sibling is already purchased
     /// </summary>
     public bool CanUnlock(List<Skill> unlockedSkills)
     {
@@ -57,6 +62,29 @@ public class Skill
             if (!found)
                 return false;
         }
+        // Blocked if any mutually exclusive sibling is already purchased
+        foreach (string exclId in mutuallyExclusiveWith)
+        {
+            foreach (Skill unlockedSkill in unlockedSkills)
+            {
+                if (unlockedSkill.id == exclId)
+                    return false;
+            }
+        }
+        // OR-dependency: at least one of anyDependency must be unlocked
+        if (anyDependency != null && anyDependency.Count > 0)
+        {
+            bool anyFound = false;
+            foreach (string anyId in anyDependency)
+            {
+                foreach (Skill unlockedSkill in unlockedSkills)
+                {
+                    if (unlockedSkill.id == anyId) { anyFound = true; break; }
+                }
+                if (anyFound) break;
+            }
+            if (!anyFound) return false;
+        }
         return true;
     }
     
@@ -73,6 +101,20 @@ public class Skill
     /// </summary>
     public void ApplyToVirus(Virus virus)
     {
+        float GetNaturalLethalityBonusByLevel()
+        {
+            switch (level)
+            {
+                case 1: return 0.005f;
+                case 2: return 0.015f;
+                case 3: return 0.035f;
+                case 4: return 0.075f;
+                default: return 0f;
+            }
+        }
+
+        bool hasMortalityEffect = false;
+
         foreach (var effect in effects)
         {
             switch (effect.Key)
@@ -116,8 +158,69 @@ public class Skill
                 case "immunityBypass":
                     virus.immunityBypass = Mathf.Clamp01(virus.immunityBypass + effect.Value);
                     break;
+                case "vaccineResearchSlowdown":
+                    virus.playerSabotageSlowdown = Mathf.Clamp(virus.playerSabotageSlowdown + effect.Value, 0.5f, 1.2f);
+                    break;
+                case "mortalityRate":
+                    hasMortalityEffect = true;
+                    virus.mortalityRate += effect.Value;
+                    break;
+                case "respiratoryDamage":
+                    hasMortalityEffect = true;
+                    virus.respiratoryDamage += effect.Value;
+                    break;
+                case "foodContamination":
+                    hasMortalityEffect = true;
+                    virus.foodContamination += effect.Value;
+                    break;
+                case "mentalDamage":
+                    hasMortalityEffect = true;
+                    virus.mentalDamage += effect.Value;
+                    break;
+                // ─── SPECIAL SKILL PASSIVES ──────────────────────────────
+                case "lethality":
+                    virus.lethality = Mathf.Clamp01(virus.lethality + effect.Value);
+                    break;
+                case "autoTransmissionSkillChance":
+                    virus.autoTransmissionSkillChance = Mathf.Clamp01(virus.autoTransmissionSkillChance + effect.Value);
+                    break;
+                case "autoTransmissionSkillChanceTimed":
+                    virus.autoTransmissionSkillChanceTimed = Mathf.Clamp01(virus.autoTransmissionSkillChanceTimed + effect.Value);
+                    break;
+                case "autoTransmissionSkillTurns":
+                    virus.autoTransmissionSkillTurnsLeft += Mathf.RoundToInt(effect.Value);
+                    break;
+                case "autoLethalSymptomChance":
+                    virus.autoLethalSymptomChance = Mathf.Clamp01(virus.autoLethalSymptomChance + effect.Value);
+                    break;
+                case "autoLethalSymptomChanceTimed":
+                    virus.autoLethalSymptomChanceTimed = Mathf.Clamp01(virus.autoLethalSymptomChanceTimed + effect.Value);
+                    break;
+                case "autoLethalSymptomTurns":
+                    virus.autoLethalSymptomTurnsLeft += Mathf.RoundToInt(effect.Value);
+                    break;
+                case "pointGainMultiplierPermanent":
+                    virus.pointGainMultiplier += effect.Value;
+                    break;
+                case "vaccineMaxProgressMultiplier":
+                    virus.vaccineMaxProgressMultiplier = effect.Value;
+                    break;
+                case "crossBorderSpreadBonus":
+                    virus.crossBorderSpreadBonus += effect.Value;
+                    break;
+                case "regionalSpreadBonus":
+                    virus.regionalSpreadBonus += effect.Value;
+                    break;
+                case "infectionGrowthMultiplier":
+                    virus.infectionGrowthMultiplier += effect.Value;
+                    break;
+                // One-shot active effects (dispersalSpatiale, seedOneInNonInfectedCountry) are
+                // handled directly in SkillTreeManager.UnlockSkill() after ApplyToVirus().
             }
         }
+
+        if (hasMortalityEffect)
+            virus.lethality = Mathf.Clamp01(virus.lethality + GetNaturalLethalityBonusByLevel());
     }
     
     public override string ToString()

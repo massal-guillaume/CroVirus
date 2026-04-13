@@ -64,7 +64,7 @@ public class StatusBarSetup
 
         // Background du contenu (gris foncé comme avant)
         var contentImage = contentGO.AddComponent<Image>();
-        contentImage.color = new Color(0.1f, 0.1f, 0.15f, 0.95f); // Gris foncé semi-transparent
+        contentImage.color = new Color(0.13f, 0.13f, 0.18f, 0.95f); // Gris foncé semi-transparent un peu plus clair
 
         // ─── LEFT PANEL (Infectés) ───────────────────────────
         var leftGO = new GameObject("LeftPanel");
@@ -72,14 +72,14 @@ public class StatusBarSetup
         
         var leftRect = leftGO.AddComponent<RectTransform>();
         leftRect.anchorMin = new Vector2(0, 0);
-        leftRect.anchorMax = new Vector2(0.3f, 1);
+        leftRect.anchorMax = new Vector2(0.24f, 1);
         leftRect.offsetMin = Vector2.zero;
         leftRect.offsetMax = Vector2.zero;
 
         var infectedText = leftGO.AddComponent<TextMeshProUGUI>();
         infectedText.text = "Infectés: 0";
         infectedText.fontSize = 28;
-        infectedText.color = Color.white;
+        infectedText.color = Color.red;
         infectedText.fontStyle = FontStyles.Bold;
         infectedText.alignment = TextAlignmentOptions.MidlineLeft;
 
@@ -89,38 +89,102 @@ public class StatusBarSetup
         infectedTextRect.offsetMin = new Vector2(20, 0);
         infectedTextRect.offsetMax = new Vector2(-20, 0);
 
-        // ─── RIGHT PANEL (Morts) ────────────────────────────
-        var rightGO = new GameObject("RightPanel");
-        rightGO.transform.SetParent(contentGO.transform, false);
-        
-        var rightRect = rightGO.AddComponent<RectTransform>();
-        rightRect.anchorMin = new Vector2(0.7f, 0);
-        rightRect.anchorMax = new Vector2(1, 1);
-        rightRect.offsetMin = Vector2.zero;
-        rightRect.offsetMax = Vector2.zero;
+        // ─── DEAD PANEL (Morts) - à droite de la barre centrale ─────
+        var deadPanelGO = new GameObject("DeadPanel");
+        deadPanelGO.transform.SetParent(contentGO.transform, false);
 
-        var deadText = rightGO.AddComponent<TextMeshProUGUI>();
-        deadText.text = "Morts: 0";
-        deadText.fontSize = 28;
-        deadText.color = new Color(0.3f, 0.3f, 0.3f, 1f); // Gris foncé pour les morts
+        var deadPanelRect = deadPanelGO.AddComponent<RectTransform>();
+        deadPanelRect.anchorMin = new Vector2(0.62f, 0);
+        deadPanelRect.anchorMax = new Vector2(0.76f, 1);
+        deadPanelRect.offsetMin = Vector2.zero;
+        deadPanelRect.offsetMax = Vector2.zero;
+
+        var deadLabelGO = new GameObject("DeadLabel");
+        deadLabelGO.transform.SetParent(deadPanelGO.transform, false);
+        var deadLabelText = deadLabelGO.AddComponent<TextMeshProUGUI>();
+        deadLabelText.text = "Mort";
+        deadLabelText.fontSize = 25;
+        deadLabelText.color = Color.black;
+        deadLabelText.fontStyle = FontStyles.Bold;
+        deadLabelText.alignment = TextAlignmentOptions.Bottom;
+        var deadLabelRect = deadLabelGO.GetComponent<RectTransform>();
+        deadLabelRect.anchorMin = new Vector2(0f, 0.52f);
+        deadLabelRect.anchorMax = new Vector2(1f, 1f);
+        deadLabelRect.offsetMin = new Vector2(4f, 0f);
+        deadLabelRect.offsetMax = new Vector2(-4f, 0f);
+
+        var deadValueGO = new GameObject("DeadValue");
+        deadValueGO.transform.SetParent(deadPanelGO.transform, false);
+        var deadText = deadValueGO.AddComponent<TextMeshProUGUI>();
+        deadText.text = "0";
+        deadText.fontSize = 22;
+        deadText.color = Color.black;
         deadText.fontStyle = FontStyles.Bold;
-        deadText.alignment = TextAlignmentOptions.MidlineRight;
+        deadText.alignment = TextAlignmentOptions.Top;
 
-        var deadTextRect = deadText.GetComponent<RectTransform>();
-        deadTextRect.anchorMin = Vector2.zero;
-        deadTextRect.anchorMax = Vector2.one;
-        deadTextRect.offsetMin = new Vector2(20, 0);
-        deadTextRect.offsetMax = new Vector2(-20, 0);
+        var deadTextRect = deadValueGO.GetComponent<RectTransform>();
+        deadTextRect.anchorMin = new Vector2(0f, 0f);
+        deadTextRect.anchorMax = new Vector2(1f, 0.52f);
+        deadTextRect.offsetMin = new Vector2(4f, 0f);
+        deadTextRect.offsetMax = new Vector2(-4f, 0f);
 
         // ─── CENTER PROGRESS BAR ─────────────────────────────
         var centerContainerGO = new GameObject("ProgressContainer");
         centerContainerGO.transform.SetParent(contentGO.transform, false);
         
         var centerRect = centerContainerGO.AddComponent<RectTransform>();
-        centerRect.anchorMin = new Vector2(0.3f, 0.25f);
-        centerRect.anchorMax = new Vector2(0.7f, 0.75f);
+        centerRect.anchorMin = new Vector2(0.24f, 0.25f);
+        centerRect.anchorMax = new Vector2(0.62f, 0.75f);
         centerRect.offsetMin = Vector2.zero;
         centerRect.offsetMax = Vector2.zero;
+
+        // ─── RIGHT PANEL (Vaccin) ─────────────────────────────
+        var vaccinePanelGO = new GameObject("VaccinePanel");
+        vaccinePanelGO.transform.SetParent(contentGO.transform, false);
+
+        var vaccinePanelRect = vaccinePanelGO.AddComponent<RectTransform>();
+        vaccinePanelRect.anchorMin = new Vector2(0.76f, 0f);
+        vaccinePanelRect.anchorMax = new Vector2(1f, 1f);
+        vaccinePanelRect.offsetMin = Vector2.zero;
+        vaccinePanelRect.offsetMax = new Vector2(-10f, 0f);
+
+        var vaccineBarBgGO = new GameObject("VaccineBarBackground");
+        vaccineBarBgGO.transform.SetParent(vaccinePanelGO.transform, false);
+        var vaccineBarBgImage = vaccineBarBgGO.AddComponent<Image>();
+        vaccineBarBgImage.color = new Color(0.08f, 0.16f, 0.32f, 1f);
+        var vaccineBarBgRect = vaccineBarBgGO.GetComponent<RectTransform>();
+        vaccineBarBgRect.anchorMin = new Vector2(0.05f, 0.2f);
+        vaccineBarBgRect.anchorMax = new Vector2(0.95f, 0.8f);
+        vaccineBarBgRect.offsetMin = Vector2.zero;
+        vaccineBarBgRect.offsetMax = Vector2.zero;
+
+        var vaccineBarFillGO = new GameObject("VaccineBarFill");
+        vaccineBarFillGO.transform.SetParent(vaccineBarBgGO.transform, false);
+        var vaccineBarFillImage = vaccineBarFillGO.AddComponent<Image>();
+        vaccineBarFillImage.color = new Color(0.18f, 0.48f, 1f, 1f);
+        vaccineBarFillImage.type = Image.Type.Filled;
+        vaccineBarFillImage.fillMethod = Image.FillMethod.Horizontal;
+        vaccineBarFillImage.fillOrigin = 0;
+        vaccineBarFillImage.fillAmount = 0f;
+        var vaccineBarFillRect = vaccineBarFillGO.GetComponent<RectTransform>();
+        vaccineBarFillRect.anchorMin = Vector2.zero;
+        vaccineBarFillRect.anchorMax = Vector2.one;
+        vaccineBarFillRect.offsetMin = Vector2.zero;
+        vaccineBarFillRect.offsetMax = Vector2.zero;
+
+        var vaccinePercentGO = new GameObject("VaccinePercent");
+        vaccinePercentGO.transform.SetParent(vaccineBarBgGO.transform, false);
+        var vaccinePercentText = vaccinePercentGO.AddComponent<TextMeshProUGUI>();
+        vaccinePercentText.text = "Vaccin: 0.0%";
+        vaccinePercentText.fontSize = 20;
+        vaccinePercentText.color = Color.white;
+        vaccinePercentText.fontStyle = FontStyles.Bold;
+        vaccinePercentText.alignment = TextAlignmentOptions.Center;
+        var vaccinePercentRect = vaccinePercentGO.GetComponent<RectTransform>();
+        vaccinePercentRect.anchorMin = Vector2.zero;
+        vaccinePercentRect.anchorMax = Vector2.one;
+        vaccinePercentRect.offsetMin = Vector2.zero;
+        vaccinePercentRect.offsetMax = Vector2.zero;
 
         // Background de la barre ROUGE (infectés - visible par-dessous)
         var barBgGO = new GameObject("BarBackground");
@@ -136,7 +200,7 @@ public class StatusBarSetup
         var barBgImage = barBgGO.AddComponent<Image>();
         barBgImage.color = new Color(1f, 0.2f, 0.2f, 1f); // ROUGE = infectés
 
-        // Fill de la barre BLEUE (sains - se réduit de gauche à droite)
+        // Fill de la barre VERTE (sains - se réduit de gauche à droite)
         var barFillGO = new GameObject("BarFill");
         barFillGO.transform.SetParent(centerContainerGO.transform, false);
         
@@ -147,7 +211,7 @@ public class StatusBarSetup
         barFillRect.offsetMax = Vector2.zero;
 
         var barFillImage = barFillGO.AddComponent<Image>();
-        barFillImage.color = new Color(0.2f, 0.4f, 1f, 1f); // BLEU = sains par-dessus
+        barFillImage.color = new Color(0.2f, 0.8f, 0.3f, 1f); // VERT = sains par-dessus
 
         // Barre NOIRE (morts) - overlay par-dessus le rouge ET le bleu
         var barDeadGO = new GameObject("BarDead");
@@ -245,6 +309,14 @@ public class StatusBarSetup
         var deadPercentField = typeof(StatusBar).GetField("deadPercentText",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         deadPercentField?.SetValue(statusBarScript, deadPercentText);
+
+        var vaccineProgressTextField = typeof(StatusBar).GetField("vaccineProgressText",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        vaccineProgressTextField?.SetValue(statusBarScript, vaccinePercentText);
+
+        var vaccineProgressFillField = typeof(StatusBar).GetField("vaccineProgressFill",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        vaccineProgressFillField?.SetValue(statusBarScript, vaccineBarFillImage);
 
         // Save scene
         EditorSceneManager.SaveScene(mainScene);

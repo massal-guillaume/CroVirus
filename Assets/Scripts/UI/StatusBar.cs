@@ -12,18 +12,24 @@ public class StatusBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthyPercentText;
     [SerializeField] private TextMeshProUGUI infectedPercentText;
     [SerializeField] private TextMeshProUGUI deadPercentText;
+    [SerializeField] private TextMeshProUGUI vaccineProgressText;
+    [SerializeField] private Image vaccineProgressFill;
     
     private GameManager gameManager;
 
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
+        AutoBindVaccineUiIfMissing();
     }
 
     void Update()
     {
         if (gameManager == null)
             return;
+
+        if (vaccineProgressText == null || vaccineProgressFill == null)
+            AutoBindVaccineUiIfMissing();
 
         UpdateStatusBar();
     }
@@ -33,6 +39,7 @@ public class StatusBar : MonoBehaviour
         int totalPopulation = GetTotalPopulation();
         int totalInfected = Mathf.Max(0, GetTotalInfected());
         int totalDead = Mathf.Max(0, GetTotalDead());
+        float vaccineProgress = GetVaccinePreparationPercent();
         int totalHealthy = Mathf.Max(0, totalPopulation - totalInfected - totalDead);
 
         // Affichage robuste: si les donnees sont desynchronisees, on normalise sur le plus grand total coherent.
@@ -41,7 +48,7 @@ public class StatusBar : MonoBehaviour
         // FORCER LES COULEURS BLANCHES POUR TOUS LES TEXTES
         if (infectedText != null)
         {
-            infectedText.color = Color.white;
+            infectedText.color = new Color(1f, 0.2f, 0.2f, 1f);
             infectedText.fontStyle = FontStyles.Bold;
         }
         if (deadText != null)
@@ -64,10 +71,24 @@ public class StatusBar : MonoBehaviour
             healthyPercentText.color = Color.white;
             healthyPercentText.fontStyle = FontStyles.Bold;
         }
+        if (vaccineProgressText != null)
+        {
+            vaccineProgressText.color = Color.white;
+            vaccineProgressText.alpha = 1f;
+            vaccineProgressText.faceColor = new Color32(255, 255, 255, 255);
+            vaccineProgressText.richText = false;
+            vaccineProgressText.enableVertexGradient = false;
+            vaccineProgressText.fontStyle = FontStyles.Bold;
+        }
 
         // Afficher les stats à gauche et droite
         infectedText.text = $"Infectés: {totalInfected:N0}";
-        deadText.text = $"Morts: {totalDead:N0}";
+        deadText.text = $"{totalDead:N0}";
+        if (vaccineProgressText != null)
+            vaccineProgressText.text = $"Vaccin: {vaccineProgress:F1}%";
+
+        if (vaccineProgressFill != null)
+            vaccineProgressFill.fillAmount = Mathf.Clamp01(vaccineProgress / 100f);
 
         // Calculer les taux
         float infectionRate = displayTotal > 0 
@@ -212,5 +233,46 @@ public class StatusBar : MonoBehaviour
             total += country.population.dead;
         }
         return total;
+    }
+
+    private float GetVaccinePreparationPercent()
+    {
+        if (gameManager == null || gameManager.virus == null)
+            return 0f;
+
+        return Mathf.Clamp(gameManager.virus.vaccinePreparationProgress, 0f, 100f);
+    }
+
+    private void AutoBindVaccineUiIfMissing()
+    {
+        if (vaccineProgressText == null)
+        {
+            Transform vaccineTextTransform = transform.Find("Content/VaccinePanel/VaccineBarBackground/VaccinePercent");
+            if (vaccineTextTransform != null)
+            {
+                vaccineProgressText = vaccineTextTransform.GetComponent<TextMeshProUGUI>();
+            }
+            else
+            {
+                TextMeshProUGUI[] allTexts = GetComponentsInChildren<TextMeshProUGUI>(true);
+                foreach (TextMeshProUGUI text in allTexts)
+                {
+                    if (text != null && text.name == "VaccinePercent")
+                    {
+                        vaccineProgressText = text;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (vaccineProgressFill == null)
+        {
+            Transform vaccineFillTransform = transform.Find("Content/VaccinePanel/VaccineBarBackground/VaccineBarFill");
+            if (vaccineFillTransform != null)
+            {
+                vaccineProgressFill = vaccineFillTransform.GetComponent<Image>();
+            }
+        }
     }
 }
