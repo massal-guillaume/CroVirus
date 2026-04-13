@@ -19,7 +19,7 @@ public class StatusBar : MonoBehaviour
 
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindAnyObjectByType<GameManager>();
         AutoBindVaccineUiIfMissing();
     }
 

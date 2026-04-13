@@ -36,7 +36,7 @@ public class CrotteEvolutionButton : MonoBehaviour
         if (menuType == null)
             return false;
 
-        Component menuComponent = FindObjectOfType(menuType) as Component;
+        Component menuComponent = FindAnyObjectByType(menuType) as Component;
         if (menuComponent == null)
             return false;
 

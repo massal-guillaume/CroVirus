@@ -21,7 +21,7 @@ public class PointsDisplay : MonoBehaviour
         // Chercher PointManager si pas encore trouvé
         if (pointManager == null && !pointManagerSearched)
         {
-            pointManager = FindObjectOfType<PointManager>();
+            pointManager = FindAnyObjectByType<PointManager>();
             if (pointManager == null)
             {
                 Debug.LogWarning("PointsDisplay: Searching for PointManager...");

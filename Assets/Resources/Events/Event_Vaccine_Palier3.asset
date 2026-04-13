@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa8e462c19d762a478407585d0c18699, type: 3}
+  m_Name: Event_Vaccine_Palier3
+  m_EditorClassIdentifier: Assembly-CSharp::EventSO
+  id: vaccine_palier_3
+  title: "Palier 3 \u2014 Organisation"
+  description: 
+  groupId: vaccine_palier
+  sequenceIndex: 2
+  oneShot: 1
+  enabled: 1
+  canTriggerRandomly: 0
+  randomChance: 0.02
+  infectedThresholdPct: 2
+  deadThresholdPct: -1
+  effects:
+  - {fileID: 11400000, guid: 333438006f57b19499b0d89777e478c0, type: 2}
+  - {fileID: 11400000, guid: 9057ae8a6e6a42243a0353dd6ade1751, type: 2}

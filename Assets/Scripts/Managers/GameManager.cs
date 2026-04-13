@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializePointManager()
     {
-        pointManager = FindObjectOfType<PointManager>();
+        pointManager = FindAnyObjectByType<PointManager>();
         if (pointManager == null)
         {
             GameObject pointManagerObj = new GameObject("PointManager");
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     
     private void InitializeSkillTreeManager()
     {
-        skillTreeManager = FindObjectOfType<SkillTreeManager>();
+        skillTreeManager = FindAnyObjectByType<SkillTreeManager>();
         if (skillTreeManager == null)
         {
             GameObject skillTreeObj = new GameObject("SkillTreeManager");
@@ -145,6 +145,12 @@ public class GameManager : MonoBehaviour
         if (newVaccinated > 0)
         {
             Debug.Log($"  [Vaccin] +{newVaccinated} vaccinés ce tour (préparation: {virus.vaccinePreparationProgress:F1}%)");
+        }
+
+        // Event evaluation (generic event system)
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ProcessTurn(currentTurn, countries, virus);
         }
 
         // Auto-unlock skills from Special virus bonuses

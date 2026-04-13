@@ -106,8 +106,8 @@ public class SkillTreeMenuUI : MonoBehaviour
     void Start()
     {
         skillTreeManager = SkillTreeManager.GetInstance();
-        pointManager = FindObjectOfType<PointManager>();
-        gameManager = FindObjectOfType<GameManager>();
+        pointManager = FindAnyObjectByType<PointManager>();
+        gameManager = FindAnyObjectByType<GameManager>();
 
         if (closeButton == null)
         {
@@ -165,7 +165,7 @@ public class SkillTreeMenuUI : MonoBehaviour
     public void ShowMenu()
     {
         if (gameManager == null)
-            gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindAnyObjectByType<GameManager>();
 
         if (gameManager != null && gameManager.IsGameOver())
             return;
@@ -177,7 +177,7 @@ public class SkillTreeMenuUI : MonoBehaviour
             skillTreeManager = SkillTreeManager.GetInstance();
 
         if (pointManager == null)
-            pointManager = FindObjectOfType<PointManager>();
+            pointManager = FindAnyObjectByType<PointManager>();
 
         activeTab = SkillTab.Transmission;
         selectedSkill = null;
@@ -200,7 +200,7 @@ public class SkillTreeMenuUI : MonoBehaviour
         HideVisualOnly();
 
         if (gameManager == null)
-            gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindAnyObjectByType<GameManager>();
 
         if (gameManager != null && !gameManager.IsGameOver())
             gameManager.SetPaused(false);
@@ -506,258 +506,6 @@ public class SkillTreeMenuUI : MonoBehaviour
         // Use a deterministic fixed layout so placements stay stable between refreshes.
         BuildMortaliteTreeFixedLayout(allSkills, unlocked);
         return;
-
-        Dictionary<string, string> l2ParentById = new Dictionary<string, string>();
-        foreach (Skill l2 in level2Skills)
-        {
-            if (l2.dependencies != null && l2.dependencies.Count > 0)
-                l2ParentById[l2.id] = l2.dependencies[0];
-        }
-
-        Dictionary<string, List<string>> fusionPartnersByL2 = new Dictionary<string, List<string>>();
-        List<(string parentA, string parentB)> fusionParentPairs = new List<(string, string)>();
-        HashSet<string> pairKeys = new HashSet<string>();
-
-        foreach (Skill l3 in level3Skills)
-        {
-            if (l3.dependencies == null || l3.dependencies.Count < 2)
-                continue;
-
-            string l2A = l3.dependencies[0];
-            string l2B = l3.dependencies[1];
-
-            if (!fusionPartnersByL2.ContainsKey(l2A))
-                fusionPartnersByL2[l2A] = new List<string>();
-            if (!fusionPartnersByL2[l2A].Contains(l2B))
-                fusionPartnersByL2[l2A].Add(l2B);
-
-            if (!fusionPartnersByL2.ContainsKey(l2B))
-                fusionPartnersByL2[l2B] = new List<string>();
-            if (!fusionPartnersByL2[l2B].Contains(l2A))
-                fusionPartnersByL2[l2B].Add(l2A);
-
-            if (!l2ParentById.ContainsKey(l2A) || !l2ParentById.ContainsKey(l2B))
-                continue;
-
-            string parentA = l2ParentById[l2A];
-            string parentB = l2ParentById[l2B];
-            string pairKey = string.CompareOrdinal(parentA, parentB) <= 0 ? parentA + "|" + parentB : parentB + "|" + parentA;
-            if (pairKeys.Add(pairKey))
-                fusionParentPairs.Add((parentA, parentB));
-        }
-
-        // Place L1 parents that share an L3 in small local clusters.
-        for (int i = 0; i < fusionParentPairs.Count; i++)
-        {
-            var pair = fusionParentPairs[i];
-            int clusterCol = i % 2;
-            int clusterRow = i / 2;
-            Vector2Int clusterStart = ClampCellToVisible(new Vector2Int(2 + clusterCol * 8, 2 + clusterRow * 7), maxCellX, maxCellY);
-
-            if (!positions.ContainsKey(pair.parentA))
-            {
-                Vector2Int aCell = FindNearestFreeCell(clusterStart, 10);
-                positions[pair.parentA] = aCell;
-                Skill aSkill = level1Skills.FirstOrDefault(s => s.id == pair.parentA);
-                if (aSkill != null)
-                    CreateSkillNode(aSkill, CellToPosition(aCell), unlocked);
-            }
-
-            if (!positions.ContainsKey(pair.parentB))
-            {
-                Vector2Int bTarget = ClampCellToVisible(new Vector2Int(clusterStart.x + 3, clusterStart.y + 1), maxCellX, maxCellY);
-                Vector2Int bCell = FindNearestFreeCell(bTarget, 10);
-                positions[pair.parentB] = bCell;
-                Skill bSkill = level1Skills.FirstOrDefault(s => s.id == pair.parentB);
-                if (bSkill != null)
-                    CreateSkillNode(bSkill, CellToPosition(bCell), unlocked);
-            }
-        }
-
-        // Place remaining L1 with a scattered layout across the map.
-        List<Skill> remainingL1 = level1Skills.Where(s => !positions.ContainsKey(s.id)).ToList();
-
-        int scatterCols = 3;
-        for (int i = 0; i < remainingL1.Count; i++)
-        {
-            int row = i / scatterCols;
-            int col = i % scatterCols;
-            int zig = (row % 2 == 0) ? 0 : 2;
-
-            Vector2Int wantedCell = ClampCellToVisible(new Vector2Int(1 + col * 7 + zig, 4 + row * 3 + (col % 2)), maxCellX, maxCellY);
-            Vector2Int cell = FindNearestFreeCell(wantedCell, 12);
-
-            positions[remainingL1[i].id] = cell;
-            CreateSkillNode(remainingL1[i], CellToPosition(cell), unlocked);
-        }
-
-        // Level 2: MUST be adjacent to its level 1 parent
-        for (int i = 0; i < level2Skills.Count; i++)
-        {
-            Skill skill = level2Skills[i];
-            if (!ShouldShowSkill(skill, unlocked))
-                continue;
-
-            if (skill.dependencies == null || skill.dependencies.Count == 0)
-                continue;
-
-            string parentId = skill.dependencies[0];
-            if (!positions.ContainsKey(parentId))
-                continue;
-
-            Vector2Int parentCell = positions[parentId];
-
-            Vector2Int cell = parentCell;
-            List<string> partnerIds;
-            if (fusionPartnersByL2.TryGetValue(skill.id, out partnerIds) && partnerIds.Count > 0)
-            {
-                bool placedWithPartner = false;
-
-                // Prefer a placement that leaves at least one strict shared-neighbor slot with an already placed partner.
-                for (int p = 0; p < partnerIds.Count; p++)
-                {
-                    string partnerId = partnerIds[p];
-                    if (!positions.ContainsKey(partnerId))
-                        continue;
-
-                    Vector2Int candidate = FindAdjacentCellWithSharedNeighbor(parentCell, positions[partnerId]);
-                    if (candidate != parentCell)
-                    {
-                        cell = candidate;
-                        placedWithPartner = true;
-                        break;
-                    }
-                }
-
-                if (!placedWithPartner)
-                {
-                    // If no partner is placed yet, bias toward the average of partner-parent L1 anchors.
-                    int tx = parentCell.x;
-                    int ty = parentCell.y;
-                    int count = 1;
-                    for (int p = 0; p < partnerIds.Count; p++)
-                    {
-                        string partnerId = partnerIds[p];
-                        if (!l2ParentById.ContainsKey(partnerId))
-                            continue;
-
-                        string partnerL1 = l2ParentById[partnerId];
-                        if (!positions.ContainsKey(partnerL1))
-                            continue;
-
-                        tx += positions[partnerL1].x;
-                        ty += positions[partnerL1].y;
-                        count++;
-                    }
-
-                    Vector2Int target = new Vector2Int(tx / count, ty / count);
-                    cell = FindAdjacentCellClosestTo(parentCell, target);
-                    if (cell == parentCell)
-                        cell = FindAdjacentFreeCell(parentCell);
-                }
-            }
-            else
-            {
-                cell = FindAdjacentFreeCell(parentCell);
-            }
-            
-            if (cell == parentCell)
-                continue;
-
-            positions[skill.id] = cell;
-            CreateSkillNode(skill, CellToPosition(cell), unlocked);
-        }
-
-        // Level 3: strict fusion placement between two L2 parents, with conflict-free assignment.
-        Dictionary<string, Vector2Int> plannedL3Cells = new Dictionary<string, Vector2Int>();
-        // L1 should not block fusion slots: reserve only already-placed L2 cells for strict L3 assignment.
-        HashSet<Vector2Int> tempUsedCells = new HashSet<Vector2Int>();
-        for (int i = 0; i < level2Skills.Count; i++)
-        {
-            Skill l2 = level2Skills[i];
-            if (positions.ContainsKey(l2.id))
-                tempUsedCells.Add(positions[l2.id]);
-        }
-        List<(Skill skill, List<Vector2Int> candidates)> l3Placements = new List<(Skill, List<Vector2Int>)>();
-
-        for (int i = 0; i < level3Skills.Count; i++)
-        {
-            Skill skill = level3Skills[i];
-            if (!ShouldShowSkill(skill, unlocked))
-                continue;
-
-            if (skill.dependencies == null || skill.dependencies.Count < 2)
-                continue;
-
-            string depA = skill.dependencies[0];
-            string depB = skill.dependencies[1];
-            if (!positions.ContainsKey(depA) || !positions.ContainsKey(depB))
-                continue;
-
-            Vector2Int a = positions[depA];
-            Vector2Int b = positions[depB];
-            List<Vector2Int> na = GetHexNeighbors(a);
-            List<Vector2Int> nb = GetHexNeighbors(b);
-            List<Vector2Int> candidates = new List<Vector2Int>();
-
-            for (int n = 0; n < na.Count; n++)
-            {
-                Vector2Int cell = na[n];
-                if (!IsInsidePlacementBounds(cell))
-                    continue;
-                if (!nb.Contains(cell))
-                    continue;
-                if (tempUsedCells.Contains(cell))
-                    continue;
-                candidates.Add(cell);
-            }
-
-            l3Placements.Add((skill, candidates));
-        }
-
-        l3Placements = l3Placements.OrderBy(x => x.candidates.Count).ToList();
-
-        bool solved = TryAssignL3CellsRecursive(l3Placements, 0, tempUsedCells, plannedL3Cells);
-        if (solved)
-        {
-            foreach (var kvp in plannedL3Cells)
-            {
-                Skill skill = level3Skills.FirstOrDefault(s => s.id == kvp.Key);
-                if (skill == null)
-                    continue;
-
-                occupiedCells.Add(kvp.Value);
-                positions[skill.id] = kvp.Value;
-                CreateSkillNode(skill, CellToPosition(kvp.Value), unlocked);
-            }
-        }
-
-        // Level 4 fusion: strict placement between two L3 parents
-        for (int i = 0; i < level4Skills.Count; i++)
-        {
-            Skill skill = level4Skills[i];
-            if (!ShouldShowSkill(skill, unlocked))
-                continue;
-
-            if (skill.dependencies == null || skill.dependencies.Count < 2)
-                continue;
-
-            string depA = skill.dependencies[0];
-            string depB = skill.dependencies[1];
-            if (!positions.ContainsKey(depA) || !positions.ContainsKey(depB))
-                continue;
-
-            Vector2Int a = positions[depA];
-            Vector2Int b = positions[depB];
-            
-            // Must be adjacent to both parents. Ignore L1 occupancy so decorative chain roots never block fusions.
-            Vector2Int cell = FindDoubleFusionAdjacentCellIgnoringL1(a, b, positions, level2Skills, level3Skills, level4Skills);
-            if (!AreAdjacent(cell, a) || !AreAdjacent(cell, b))
-                continue;
-
-            positions[skill.id] = cell;
-            CreateSkillNode(skill, CellToPosition(cell), unlocked);
-        }
     }
 
     private void BuildMortaliteTreeFixedLayout(List<Skill> allSkills, List<Skill> unlocked)
