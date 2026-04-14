@@ -31,6 +31,9 @@ public class SkillTreeMenuUI : MonoBehaviour
 
     public static SkillTreeMenuUI Instance { get; private set; }
 
+    public static event System.Action OnMenuOpened;
+    public static event System.Action OnMenuClosed;
+
     [Header("Root")]
     [SerializeField] private CanvasGroup menuCanvasGroup;
     [SerializeField] private Button closeButton;
@@ -192,6 +195,7 @@ public class SkillTreeMenuUI : MonoBehaviour
             menuCanvasGroup.blocksRaycasts = true;
         }
 
+        OnMenuOpened?.Invoke();
         RefreshCurrentTab();
     }
 
@@ -204,6 +208,8 @@ public class SkillTreeMenuUI : MonoBehaviour
 
         if (gameManager != null && !gameManager.IsGameOver())
             gameManager.SetPaused(false);
+
+        OnMenuClosed?.Invoke();
     }
 
     private void HideVisualOnly()
@@ -337,7 +343,7 @@ public class SkillTreeMenuUI : MonoBehaviour
             var pair = fusionParentPairs[i];
             int clusterCol = i % 2;
             int clusterRow = i / 2;
-            Vector2Int clusterStart = ClampCellToVisible(new Vector2Int(2 + clusterCol * 8, 2 + clusterRow * 7), maxCellX, maxCellY);
+            Vector2Int clusterStart = ClampCellToVisible(new Vector2Int(2 + clusterCol * 8, clusterRow * 7), maxCellX, maxCellY);
 
             if (!positions.ContainsKey(pair.parentA))
             {
@@ -365,7 +371,7 @@ public class SkillTreeMenuUI : MonoBehaviour
         // Force specific skills to the right side so important late-game branches are easier to spot.
         Dictionary<string, Vector2Int> forcedL1Cells = new Dictionary<string, Vector2Int>
         {
-            { "vaccineSabotageL1", new Vector2Int(maxCellX - 4, 2) }
+            { "vaccineSabotageL1", new Vector2Int(maxCellX - 4, 0) }
         };
 
         foreach (var forced in forcedL1Cells)
@@ -389,7 +395,7 @@ public class SkillTreeMenuUI : MonoBehaviour
             int zig = (row % 2 == 0) ? 0 : 2;
 
             // Keep remaining L1 nodes in the visible upper/middle area.
-            Vector2Int wantedCell = ClampCellToVisible(new Vector2Int(1 + col * 7 + zig, 4 + row * 3 + (col % 2)), maxCellX, maxCellY);
+            Vector2Int wantedCell = ClampCellToVisible(new Vector2Int(1 + col * 7 + zig, 2 + row * 3 + (col % 2)), maxCellX, maxCellY);
             Vector2Int cell = FindNearestFreeCell(wantedCell, 12);
 
             positions[remainingL1[i].id] = cell;
@@ -510,7 +516,7 @@ public class SkillTreeMenuUI : MonoBehaviour
 
     private void BuildMortaliteTreeFixedLayout(List<Skill> allSkills, List<Skill> unlocked)
     {
-        Vector2Int layoutOffset = new Vector2Int(0, -2);
+        Vector2Int layoutOffset = new Vector2Int(0, -3);
 
         Dictionary<string, Vector2Int> fixedCells = new Dictionary<string, Vector2Int>
         {

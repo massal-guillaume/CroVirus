@@ -13,7 +13,20 @@ public class Notification : MonoBehaviour
 {
     public static Notification Instance { get; private set; }
 
-    private struct Entry { public string title; public string message; public Color accentColor; }
+    private Button panelButton;
+
+    public void ShowEvent(string title, string message)
+        => Show(title, message, new Color(0.22f, 0.55f, 0.85f, 0.85f), isEventNotification: true);
+
+    private Button AddPanelButton()
+    {
+        var panel = canvasGroup.gameObject;
+        var btn = panel.GetComponent<Button>();
+        if (btn == null) btn = panel.AddComponent<Button>();
+        return btn;
+    }
+
+    private struct Entry { public string title; public string message; public Color accentColor; public bool isEventNotification; }
     private readonly Queue<Entry> queue = new Queue<Entry>();
     private bool isShowing = false;
 
@@ -40,10 +53,10 @@ public class Notification : MonoBehaviour
 
     // ── Public API ────────────────────────────────────────────────────────────
 
-    /// <summary>Show a notification with a custom accent colour.</summary>
-    public void Show(string title, string message, Color accentColor)
+    /// <summary>Show a notification with a custom accent colour. Pauses the game and waits for click to close.</summary>
+    public void Show(string title, string message, Color accentColor, bool isEventNotification = false)
     {
-        queue.Enqueue(new Entry { title = title, message = message, accentColor = accentColor });
+        queue.Enqueue(new Entry { title = title, message = message, accentColor = accentColor, isEventNotification = isEventNotification });
         if (!isShowing) StartCoroutine(ProcessQueue());
     }
 
@@ -56,6 +69,8 @@ public class Notification : MonoBehaviour
     private IEnumerator ProcessQueue()
     {
         isShowing = true;
+        var gm = FindAnyObjectByType<GameManager>();
+        panelButton ??= AddPanelButton();
         while (queue.Count > 0)
         {
             Entry e = queue.Dequeue();
@@ -64,9 +79,25 @@ public class Notification : MonoBehaviour
             titleText.color  = Color.white;
             if (outline != null) outline.effectColor = e.accentColor;
 
+            if (gm != null) gm.PauseGame();
+
             yield return StartCoroutine(Fade(0f, 1f, FadeTime));
-            yield return new WaitForSeconds(HoldTime);
+
+            // Attend le clic du joueur pour fermer
+            bool closed = false;
+            panelButton.onClick.RemoveAllListeners();
+            panelButton.onClick.AddListener(() => closed = true);
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+            while (!closed) yield return null;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+
             yield return StartCoroutine(Fade(1f, 0f, FadeTime));
+
+            if (gm != null) gm.ResumeGame();
+            if (e.isEventNotification && EventManager.Instance != null)
+                EventManager.Instance.OnEventNotificationClosed();
         }
         isShowing = false;
     }
@@ -104,10 +135,10 @@ public class Notification : MonoBehaviour
 
         RectTransform rt = panel.AddComponent<RectTransform>();
         rt.sizeDelta        = new Vector2(PanelW, PanelH);
-        rt.anchorMin        = new Vector2(0.5f, 1f);
-        rt.anchorMax        = new Vector2(0.5f, 1f);
-        rt.pivot            = new Vector2(0.5f, 1f);
-        rt.anchoredPosition = new Vector2(0f, -80f);
+        rt.anchorMin        = new Vector2(0.5f, 0.5f);
+        rt.anchorMax        = new Vector2(0.5f, 0.5f);
+        rt.pivot            = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
 
         Image bg = panel.AddComponent<Image>();
         bg.color = new Color(0.08f, 0.08f, 0.08f, 0.97f);
@@ -127,10 +158,13 @@ public class Notification : MonoBehaviour
         titleRT.offsetMin = new Vector2(12f, 0f);
         titleRT.offsetMax = new Vector2(-12f, -6f);
         titleText = titleGO.AddComponent<TextMeshProUGUI>();
-        titleText.fontSize  = 13f;
+        titleText.fontSize  = 20f;
         titleText.fontStyle = FontStyles.Bold;
         titleText.alignment = TextAlignmentOptions.Center;
         titleText.color     = Color.white;
+        titleText.enableAutoSizing  = false;
+        titleText.enableWordWrapping = false;
+        titleText.overflowMode = TextOverflowModes.Ellipsis;
 
         // Message (bottom half)
         GameObject msgGO = new GameObject("Message");
@@ -138,12 +172,14 @@ public class Notification : MonoBehaviour
         RectTransform msgRT = msgGO.AddComponent<RectTransform>();
         msgRT.anchorMin = new Vector2(0f, 0f);
         msgRT.anchorMax = new Vector2(1f, 0.5f);
-        msgRT.offsetMin = new Vector2(12f, 6f);
-        msgRT.offsetMax = new Vector2(-12f, 0f);
+        msgRT.offsetMin = new Vector2(14f, 6f);
+        msgRT.offsetMax = new Vector2(-14f, 0f);
         messageText = msgGO.AddComponent<TextMeshProUGUI>();
-        messageText.fontSize  = 16f;
-        messageText.fontStyle = FontStyles.Bold;
+        messageText.fontSize  = 15f;
+        messageText.fontStyle = FontStyles.Normal;
         messageText.alignment = TextAlignmentOptions.Center;
         messageText.color     = Color.white;
+        messageText.enableWordWrapping = true;
+        messageText.overflowMode = TextOverflowModes.Truncate;
     }
 }

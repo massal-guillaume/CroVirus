@@ -1,153 +1,635 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Popup de sélection du virus au démarrage.
-/// Appelle onSelected(VirusType) puis se détruit.
+/// Plein-écran virus selection + patient 0 + loading bar.
+/// Appelé via VirusSelectionPanel.Show(Action<VirusType, string> onReady).
 /// </summary>
 public class VirusSelectionPanel : MonoBehaviour
 {
-    private static readonly (VirusType type, string label, string desc, Color color)[] Entries =
+    // ─── Données des continents ───────────────────────────────
+    private struct ContinentEntry
     {
-        (VirusType.Classique,     "La crottance",  "Virus classique, équilibré",           new Color(0.60f, 0.85f, 0.40f, 1f)),
-        (VirusType.Cacastellaire, "Cacastellaire", "Dispersion spatiale et transmission",  new Color(0.90f, 0.65f, 0.15f, 1f)),
-        (VirusType.NanoCaca,      "Nano Caca",     "Nano-pathogène furtif et létal",        new Color(0.30f, 0.70f, 1.00f, 1f)),
-        (VirusType.FongiCaca,   "Fongi-Caca",  "Mycose fongique à croissance lente",   new Color(0.80f, 0.35f, 0.90f, 1f)),
+        public string label; public Color color; public string[] countries;
+        public ContinentEntry(string l, Color c, string[] ctrs) { label = l; color = c; countries = ctrs; }
+    }
+    private static readonly ContinentEntry[] ContinentData = new ContinentEntry[]
+    {
+        new ContinentEntry("EUROPE", new Color(0.35f, 0.55f, 1.00f, 1f), new[] {
+            "France","Germany","United Kingdom","Spain","Italy","Poland","Netherlands",
+            "Belgium","Sweden","Norway","Denmark","Finland","Switzerland","Austria",
+            "Portugal","Czechia","Hungary","Romania","Ukraine","Greece","Russia",
+            "Serbia","Croatia","Slovakia","Bulgaria","Belarus","Albania","Bosnia and Herz.",
+            "North Macedonia","Montenegro","Moldova","Lithuania","Latvia","Estonia",
+            "Luxembourg","Malta","Cyprus","Iceland","Ireland","Kosovo","San Marino",
+            "Monaco","Andorra","Liechtenstein","N. Cyprus","Åland","Greenland",
+            "Faeroe Is.","Guernsey","Jersey","Isle of Man" }),
+        new ContinentEntry("ASIE", new Color(1.00f, 0.65f, 0.15f, 1f), new[] {
+            "China","India","Japan","South Korea","Indonesia","Pakistan","Bangladesh",
+            "Vietnam","Thailand","Myanmar","Malaysia","Philippines","Uzbekistan",
+            "Kazakhstan","Afghanistan","Tajikistan","Kyrgyzstan","Turkmenistan",
+            "Azerbaijan","Armenia","Georgia","Mongolia","Singapore","Cambodia","Laos",
+            "Nepal","Sri Lanka","North Korea","Taiwan","Hong Kong","Macao","Bhutan",
+            "Timor-Leste","Brunei","Maldives",
+            "Saudi Arabia","Turkey","Iran","Iraq","Israel","Jordan","Lebanon",
+            "Syria","Yemen","Kuwait","United Arab Emirates","Qatar","Oman","Bahrain","Palestine" }),
+        new ContinentEntry("AFRIQUE", new Color(0.95f, 0.50f, 0.08f, 1f), new[] {
+            "Nigeria","Ethiopia","Dem. Rep. Congo","Tanzania","South Africa","Kenya",
+            "Algeria","Sudan","Uganda","Morocco","Angola","Mozambique","Ghana",
+            "Madagascar","Cameroon","Côte d'Ivoire","Niger","Mali","Malawi","Burkina Faso",
+            "Zambia","Senegal","Chad","Somalia","Zimbabwe","Guinea","Rwanda","Benin",
+            "Tunisia","S. Sudan","Egypt","Togo","Sierra Leone","Libya","Liberia",
+            "Central African Rep.","Congo","Eritrea","Mauritania","Gabon","Gambia",
+            "Botswana","Namibia","Guinea-Bissau","Lesotho","Eq. Guinea","Mauritius",
+            "Djibouti","eSwatini","Cabo Verde","Comoros","Seychelles",
+            "São Tomé and Principe","Somaliland","W. Sahara","Saint Helena" }),
+        new ContinentEntry("AMER. NORD", new Color(0.30f, 0.88f, 0.30f, 1f), new[] {
+            "United States of America","Canada","Mexico","Guatemala","Honduras",
+            "El Salvador","Nicaragua","Costa Rica","Panama","Cuba","Haiti",
+            "Dominican Rep.","Jamaica","Trinidad and Tobago","Bahamas","Barbados",
+            "Belize","Grenada","Saint Lucia","St. Vin. and Gren.","Dominica",
+            "St. Kitts and Nevis","Antigua and Barb.","Puerto Rico","U.S. Virgin Is.",
+            "British Virgin Is.","Aruba","Curaçao","Sint Maarten","St-Barthélémy",
+            "St-Martin","Turks and Caicos Is.","Cayman Is.","Bermuda",
+            "Montserrat","Anguilla","St. Pierre and Miquelon" }),
+        new ContinentEntry("AMER. SUD", new Color(0.55f, 0.90f, 0.18f, 1f), new[] {
+            "Brazil","Argentina","Colombia","Chile","Peru","Venezuela","Ecuador",
+            "Bolivia","Paraguay","Uruguay","Guyana","Suriname","Falkland Is." }),
+        new ContinentEntry("OCEANIE", new Color(0.20f, 0.78f, 0.95f, 1f), new[] {
+            "Australia","New Zealand","Papua New Guinea","Fiji","Vanuatu","Solomon Is.",
+            "Samoa","Tonga","Kiribati","Marshall Is.","Micronesia","Palau","Nauru",
+            "Tuvalu","Cook Is.","New Caledonia","Fr. Polynesia","N. Mariana Is.","Guam",
+            "American Samoa","Niue","Norfolk Island","Wallis and Futuna Is.","Pitcairn Is." }),
+        new ContinentEntry("AUTRES", new Color(0.55f, 0.55f, 0.55f, 1f), new[] {
+            "Antarctica","Vatican","Br. Indian Ocean Ter.","Fr. S. Antarctic Lands",
+            "S. Geo. and the Is.","Ashmore and Cartier Is.","Heard I. and McDonald Is.",
+            "Indian Ocean Ter.","Siachen Glacier" }),
     };
 
-    public static void Show(Action<VirusType> onSelected)
+    // ─── Données des virus ────────────────────────────────────
+    private static readonly VirusEntry[] Entries = new VirusEntry[]
+    {
+        new VirusEntry(
+            VirusType.Classique,
+            "La Crottance",
+            "Virus classique équilibré",
+            "Né dans les élevages industriels d'Europe de l'Est, La Crottance est le premier pathogène fécal à avoir franchi la barrière des espèces de manière stable. Sa structure ARN simple lui confère une remarquable adaptabilité climatique.\n\nTransmission directe par contact féco-oral. Faible létalité initiale mais progression inexorable.",
+            "Transmission équilibrée · Bonne résistance au froid · Forte progression rurale · Compatible avec tous les modes de transport · Idéal pour une première infection mondiale",
+            new Color(0.60f, 0.85f, 0.40f, 1f)
+        ),
+        new VirusEntry(
+            VirusType.Cacastellaire,
+            "Cacastellaire",
+            "Pathogène à dispersion atmosphérique",
+            "Découvert en orbite basse lors de la mission ISS-47, ce virus d'origine inconnue s'est adapté à la pression atmosphérique terrestre avec une efficacité inquiétante. Ses spores microscopiques survivent dans les systèmes de climatisation des aéronefs.\n\nSpécialiste de la transmission aérienne intercontinentale. Touche en priorité les pays à fort trafic aérien.",
+            "Excellente propagation aérienne · Bonus sur les transports internationaux · Forte résistance à la chaleur · Peut évoluer vers une dispersion stellaire · Cible les hubs aéroportuaires",
+            new Color(0.90f, 0.65f, 0.15f, 1f)
+        ),
+        new VirusEntry(
+            VirusType.NanoCaca,
+            "Nano Caca",
+            "Nano-pathogène furtif et létal",
+            "Résultat d'une expérience de bio-ingénierie militaire avortée, le Nano Caca est un agent pathogène de taille nanométrique capable de traverser les filtres HEPA standards. Indétectable par les tests sérologiques conventionnels pendant 14 jours.\n\nLétalité élevée, progression silencieuse. Les gouvernements ne réagissent pas avant qu'il soit trop tard.",
+            "Invisible aux systèmes de détection précoce · Létalité élevée · Traversée des barrières sanitaires · Résistance aux traitements antiviraux · Bonus sur les pays à haute technologie médicale",
+            new Color(0.30f, 0.70f, 1.00f, 1f)
+        ),
+        new VirusEntry(
+            VirusType.FongiCaca,
+            "Fongi-Caca",
+            "Mycose fongique à croissance lente",
+            "Mutant du Candida auris découvert dans les réseaux d'égouts de São Paulo, le Fongi-Caca prospère dans les environnements chauds et humides. Sa paroi cellulaire polysaccharidique le rend imperméable aux traitements antifongiques actuels.\n\nCroissance lente mais implacable. Une fois établi, il est impossible à éradiquer par les moyens conventionnels.",
+            "Résistance totale aux antifongiques · Prospère dans les zones tropicales · Contamination durable des infrastructures hydriques · Mutations aléatoires · Bonus dans les pays à faible hygiène",
+            new Color(0.80f, 0.35f, 0.90f, 1f)
+        ),
+    };
+
+    // ─── Référence statique pour le chargement ────────────────
+    public static void Show(Action<VirusType, string> onReady)
     {
         GameObject go = new GameObject("VirusSelectionPanel");
         DontDestroyOnLoad(go);
         var panel = go.AddComponent<VirusSelectionPanel>();
-        panel.Build(onSelected);
+        panel._onReady = onReady;
+        panel.Build();
     }
 
-    private void Build(Action<VirusType> onSelected)
-    {
-        // Canvas
-        Canvas canvas = FindAnyObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            GameObject cvGO = new GameObject("SelectionCanvas");
-            canvas = cvGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 100;
-            cvGO.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            cvGO.AddComponent<GraphicRaycaster>();
-        }
+    // ─── State ────────────────────────────────────────────────
+    private Action<VirusType, string> _onReady;
+    private VirusType? _selectedVirus;
+    private string _selectedCountry;
+    private Button _startButton;
+    private TextMeshProUGUI _startButtonText;
+    private Image[] _virusCardBorders;
+    private Canvas _canvas;
+    private readonly List<GameObject> _hiddenCanvases = new List<GameObject>();
+    private GameObject _overlay;
 
-        // Fond noir semi-transparent sur tout l'écran
-        GameObject overlay = new GameObject("Overlay");
-        overlay.transform.SetParent(canvas.transform, false);
-        Image overlayImg = overlay.AddComponent<Image>();
-        overlayImg.color = new Color(0f, 0f, 0f, 0.75f);
-        RectTransform overlayRT = overlay.GetComponent<RectTransform>();
+    // Country selection
+    private GameObject _countryGrid;
+    private GameObject _countryContent;
+    private Image[] _cardSelectionGlows;
+    private TextMeshProUGUI _selectedCountryLabel;
+
+    // ─── Build ────────────────────────────────────────────────
+    private void Build()
+    {
+        // Canvas dédié toujours au-dessus de tout (sortingOrder 200)
+        GameObject cvGO = new GameObject("SelectionCanvas");
+        DontDestroyOnLoad(cvGO);
+        _canvas = cvGO.AddComponent<Canvas>();
+        _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        _canvas.sortingOrder = 200;
+        var scaler = cvGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        cvGO.AddComponent<GraphicRaycaster>();
+
+        // Fond plein écran — rouge opaque, masque tout ce qui est derrière
+        _overlay = new GameObject("VSP_Overlay");
+        _overlay.transform.SetParent(_canvas.transform, false);
+        Image overlayImg = _overlay.AddComponent<Image>();
+        overlayImg.color = new Color(0.36f, 0.04f, 0.04f, 1f);
+        RectTransform overlayRT = _overlay.GetComponent<RectTransform>();
         overlayRT.anchorMin = Vector2.zero;
         overlayRT.anchorMax = Vector2.one;
         overlayRT.offsetMin = Vector2.zero;
         overlayRT.offsetMax = Vector2.zero;
 
-        // Panel central
-        GameObject panel = new GameObject("CenterPanel");
-        panel.transform.SetParent(overlay.transform, false);
-        Image panelImg = panel.AddComponent<Image>();
-        panelImg.color = new Color(0.13f, 0.13f, 0.13f, 0.97f);
-        Outline panelOutline = panel.AddComponent<Outline>();
-        panelOutline.effectColor    = new Color(0.85f, 0.22f, 0.22f, 0.55f);
-        panelOutline.effectDistance = new Vector2(2f, 2f);
-        RectTransform panelRT = panel.GetComponent<RectTransform>();
-        panelRT.anchorMin        = new Vector2(0.5f, 0.5f);
-        panelRT.anchorMax        = new Vector2(0.5f, 0.5f);
-        panelRT.pivot            = new Vector2(0.5f, 0.5f);
-        panelRT.sizeDelta        = new Vector2(480f, 380f);
-        panelRT.anchoredPosition = Vector2.zero;
+        // Masquer les autres éléments UI — stocker pour pouvoir les réactiver
+        var allCanvases = FindObjectsByType<Canvas>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var c in allCanvases)
+        {
+            if (c != _canvas && c.sortingOrder < 200)
+            {
+                _hiddenCanvases.Add(c.gameObject);
+                c.gameObject.SetActive(false);
+            }
+        }
 
-        // Titre
-        GameObject titleGO = new GameObject("Title");
-        titleGO.transform.SetParent(panel.transform, false);
-        RectTransform titleRT = titleGO.AddComponent<RectTransform>();
-        titleRT.anchorMin        = new Vector2(0f, 1f);
-        titleRT.anchorMax        = new Vector2(1f, 1f);
-        titleRT.pivot            = new Vector2(0.5f, 1f);
-        titleRT.sizeDelta        = new Vector2(0f, 50f);
-        titleRT.anchoredPosition = new Vector2(0f, -12f);
-        TextMeshProUGUI titleTxt = titleGO.AddComponent<TextMeshProUGUI>();
-        titleTxt.text      = "CHOISISSEZ VOTRE VIRUS";
-        titleTxt.fontSize  = 17f;
-        titleTxt.fontStyle = FontStyles.Bold;
-        titleTxt.alignment = TextAlignmentOptions.Center;
-        titleTxt.color     = Color.white;
+        // Titre principal
+        GameObject titleGO = MakeText(_overlay, "VSP_Title", "CHOISISSEZ VOTRE VIRUS", 28f, FontStyles.Bold, Color.white,
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -20f), new Vector2(0f, -60f), TextAlignmentOptions.Center);
 
-        // Boutons (un par virus)
-        float btnH   = 62f;
-        float gap    = 10f;
-        float startY = -72f;
+        // ── Moitié haute : cartes virus ──────────────────────
+        GameObject topHalf = MakePanel(_overlay, "VSP_Top",
+            new Vector2(0f, 0.45f), new Vector2(1f, 1f),
+            new Vector4(20f, 60f, 20f, 0f),
+            new Color(0.10f, 0.10f, 0.10f, 0f));
+
+        _virusCardBorders = new Image[Entries.Length];
+        _cardSelectionGlows = new Image[Entries.Length];
+        float cardPad = 12f;
 
         for (int i = 0; i < Entries.Length; i++)
         {
-            var entry = Entries[i];
+            VirusEntry entry = Entries[i];
+            int captured = i;
 
-            GameObject btnGO = new GameObject($"Btn_{entry.type}");
-            btnGO.transform.SetParent(panel.transform, false);
-            RectTransform btnRT = btnGO.AddComponent<RectTransform>();
-            btnRT.anchorMin        = new Vector2(0.5f, 1f);
-            btnRT.anchorMax        = new Vector2(0.5f, 1f);
-            btnRT.pivot            = new Vector2(0.5f, 1f);
-            btnRT.sizeDelta        = new Vector2(420f, btnH);
-            btnRT.anchoredPosition = new Vector2(0f, startY - i * (btnH + gap));
+            GameObject card = new GameObject($"VSP_Card_{entry.type}");
+            card.transform.SetParent(topHalf.transform, false);
 
+            RectTransform cardRT = card.AddComponent<RectTransform>();
+            float cardW = 1f / Entries.Length;
+            cardRT.anchorMin = new Vector2(i * cardW, 0f);
+            cardRT.anchorMax = new Vector2((i + 1) * cardW, 1f);
+            cardRT.offsetMin = new Vector2(cardPad, cardPad);
+            cardRT.offsetMax = new Vector2(-cardPad, -cardPad);
+
+            Image cardImg = card.AddComponent<Image>();
+            cardImg.color = new Color(0.14f, 0.14f, 0.14f, 1f);
+            _virusCardBorders[i] = cardImg;
+
+            // Image glow de sélection (indépendante du bouton — pas animée par ColorBlock)
+            GameObject glowGO = new GameObject("Glow");
+            glowGO.transform.SetParent(card.transform, false);
+            Image glowImg = glowGO.AddComponent<Image>();
+            glowImg.color = new Color(entry.color.r, entry.color.g, entry.color.b, 0f);
+            RectTransform glowRT = glowGO.GetComponent<RectTransform>();
+            glowRT.anchorMin = Vector2.zero; glowRT.anchorMax = Vector2.one;
+            glowRT.offsetMin = new Vector2(-4f, -4f); glowRT.offsetMax = new Vector2(4f, 4f);
+            _cardSelectionGlows[i] = glowImg;
+
+            Button cardBtn = card.AddComponent<Button>();
+            cardBtn.transition = Selectable.Transition.None;
+            cardBtn.targetGraphic = cardImg;
+
+            // Nom du virus — grand, centré, tout en haut
+            MakeText(card, "Name", entry.label, 28f, FontStyles.Bold, entry.color,
+                new Vector2(0f, 1f), new Vector2(1f, 1f),
+                new Vector2(8f, -70f), new Vector2(-8f, -10f),
+                TextAlignmentOptions.Center);
+
+            // Tagline
+            MakeText(card, "Tagline", entry.tagline, 14f, FontStyles.Italic,
+                new Color(0.75f, 0.75f, 0.75f, 1f),
+                new Vector2(0f, 1f), new Vector2(1f, 1f),
+                new Vector2(14f, -56f), new Vector2(-14f, -84f),
+                TextAlignmentOptions.Left);
+
+            // Séparateur
+            GameObject sep = new GameObject("Sep");
+            sep.transform.SetParent(card.transform, false);
+            Image sepImg = sep.AddComponent<Image>();
+            sepImg.color = new Color(entry.color.r, entry.color.g, entry.color.b, 0.35f);
+            RectTransform sepRT = sep.GetComponent<RectTransform>();
+            sepRT.anchorMin = new Vector2(0f, 1f);
+            sepRT.anchorMax = new Vector2(1f, 1f);
+            sepRT.offsetMin = new Vector2(14f, -88f);
+            sepRT.offsetMax = new Vector2(-14f, -90f);
+
+            // Description — offsetMin.y (-290) < offsetMax.y (-98) car ancre=haut → zone visible
+            MakeText(card, "Desc", entry.description, 14f, FontStyles.Normal,
+                new Color(0.82f, 0.82f, 0.82f, 1f),
+                new Vector2(0f, 1f), new Vector2(1f, 1f),
+                new Vector2(14f, -290f), new Vector2(-14f, -98f),
+                TextAlignmentOptions.TopLeft, overflow: TextOverflowModes.Ellipsis);
+
+            // Capacités
+            MakeText(card, "Caps", "►  " + entry.capabilities.Replace(" · ", "\n►  "), 11f, FontStyles.Normal,
+                new Color(entry.color.r * 0.85f, entry.color.g * 0.85f, entry.color.b * 0.85f, 1f),
+                new Vector2(0f, 0f), new Vector2(1f, 0f),
+                new Vector2(14f, 10f), new Vector2(-14f, 165f),
+                TextAlignmentOptions.BottomLeft, overflow: TextOverflowModes.Truncate);
+
+            cardBtn.onClick.AddListener(() => SelectVirus(captured));
+        }
+
+        // ── Séparateur horizontal ─────────────────────────────
+        GameObject hSep = new GameObject("VSP_HSep");
+        hSep.transform.SetParent(_overlay.transform, false);
+        Image hSepImg = hSep.AddComponent<Image>();
+        hSepImg.color = new Color(0.85f, 0.22f, 0.22f, 0.40f);
+        RectTransform hSepRT = hSep.GetComponent<RectTransform>();
+        hSepRT.anchorMin = new Vector2(0f, 0.45f);
+        hSepRT.anchorMax = new Vector2(1f, 0.45f);
+        hSepRT.offsetMin = new Vector2(20f, -1f);
+        hSepRT.offsetMax = new Vector2(-20f, 1f);
+
+        // ── Moitié basse : Patient 0 ──────────────────────────
+        GameObject bottomHalf = MakePanel(_overlay, "VSP_Bottom",
+            new Vector2(0f, 0f), new Vector2(1f, 0.45f),
+            new Vector4(0f, 0f, 0f, 0f),
+            new Color(0f, 0f, 0f, 0f));
+
+        // Pays sélectionné (centré, au-dessus du titre)
+        _selectedCountryLabel = MakeText(bottomHalf, "SelectedCountry", "", 20f, FontStyles.Bold,
+            new Color(0.4f, 0.95f, 0.4f, 1f),
+            new Vector2(0f, 1f), new Vector2(1f, 1f),
+            new Vector2(0f, -88f), new Vector2(0f, -44f),
+            TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
+
+        // Titre patient 0 (centré, grand)
+        MakeText(bottomHalf, "P0Title", "PAYS DU PATIENT 0", 24f, FontStyles.Bold, Color.white,
+            new Vector2(0f, 1f), new Vector2(1f, 1f),
+            new Vector2(0f, -38f), new Vector2(0f, -8f),
+            TextAlignmentOptions.Center);
+
+        // ── Ligne boutons continents ───────────────────────────
+        GameObject continentRow = new GameObject("VSP_Continents");
+        continentRow.transform.SetParent(bottomHalf.transform, false);
+        RectTransform continentRowRT = continentRow.AddComponent<RectTransform>();
+        continentRowRT.anchorMin = new Vector2(0f, 1f); continentRowRT.anchorMax = new Vector2(1f, 1f);
+        continentRowRT.offsetMin = new Vector2(20f, -140f); continentRowRT.offsetMax = new Vector2(-20f, -96f);
+        HorizontalLayoutGroup hlg = continentRow.AddComponent<HorizontalLayoutGroup>();
+        hlg.childForceExpandWidth = true; hlg.childForceExpandHeight = true; hlg.spacing = 6f;
+
+        for (int ci = 0; ci < ContinentData.Length; ci++)
+        {
+            var cd = ContinentData[ci];
+            string[] captured = cd.countries;
+            Color cc = cd.color;
+            GameObject cbGO = new GameObject($"Cont_{ci}");
+            cbGO.transform.SetParent(continentRow.transform, false);
+            Image cbImg = cbGO.AddComponent<Image>();
+            cbImg.color = new Color(cc.r * 0.28f, cc.g * 0.28f, cc.b * 0.28f, 1f);
+            Button cbBtn = cbGO.AddComponent<Button>();
+            ColorBlock cbCB = ColorBlock.defaultColorBlock;
+            cbCB.normalColor   = new Color(cc.r * 0.28f, cc.g * 0.28f, cc.b * 0.28f, 1f);
+            cbCB.highlightedColor = new Color(cc.r * 0.50f, cc.g * 0.50f, cc.b * 0.50f, 1f);
+            cbCB.pressedColor  = new Color(cc.r * 0.18f, cc.g * 0.18f, cc.b * 0.18f, 1f);
+            cbBtn.colors = cbCB; cbBtn.targetGraphic = cbImg;
+            cbBtn.onClick.AddListener(() => ShowContinentCountries(captured, cc));
+            GameObject cbTxtGO = new GameObject("T"); cbTxtGO.transform.SetParent(cbGO.transform, false);
+            TextMeshProUGUI cbTxt = cbTxtGO.AddComponent<TextMeshProUGUI>();
+            cbTxt.text = cd.label; cbTxt.fontSize = 10f; cbTxt.fontStyle = FontStyles.Bold;
+            cbTxt.color = new Color(Mathf.Min(cc.r + 0.4f, 1f), Mathf.Min(cc.g + 0.4f, 1f), Mathf.Min(cc.b + 0.4f, 1f), 1f);
+            cbTxt.alignment = TextAlignmentOptions.Center;
+            RectTransform cbTxtRT = cbTxtGO.GetComponent<RectTransform>();
+            cbTxtRT.anchorMin = Vector2.zero; cbTxtRT.anchorMax = Vector2.one;
+            cbTxtRT.offsetMin = Vector2.zero; cbTxtRT.offsetMax = Vector2.zero;
+        }
+
+        // ── Grille de pays scrollable (cachée, apparaît au clic continent) ──
+        _countryGrid = new GameObject("VSP_CountryGrid");
+        _countryGrid.transform.SetParent(bottomHalf.transform, false);
+        RectTransform cgRT = _countryGrid.AddComponent<RectTransform>();
+        cgRT.anchorMin = new Vector2(0f, 1f); cgRT.anchorMax = new Vector2(1f, 1f);
+        cgRT.offsetMin = new Vector2(20f, -460f); cgRT.offsetMax = new Vector2(-20f, -148f);
+        Image cgBg = _countryGrid.AddComponent<Image>();
+        cgBg.color = new Color(0.07f, 0.07f, 0.07f, 0.97f);
+        ScrollRect cgScroll = _countryGrid.AddComponent<ScrollRect>();
+        cgScroll.horizontal = false; cgScroll.vertical = true;
+        cgScroll.scrollSensitivity = 30f;
+        cgScroll.movementType = ScrollRect.MovementType.Clamped;
+        cgScroll.inertia = true; cgScroll.decelerationRate = 0.18f;
+        // Viewport
+        GameObject cgViewport = new GameObject("Viewport");
+        cgViewport.transform.SetParent(_countryGrid.transform, false);
+        RectTransform cgVpRT = cgViewport.AddComponent<RectTransform>();
+        cgVpRT.anchorMin = Vector2.zero; cgVpRT.anchorMax = Vector2.one;
+        cgVpRT.offsetMin = Vector2.zero; cgVpRT.offsetMax = Vector2.zero;
+        cgViewport.AddComponent<RectMask2D>();
+        // Content
+        _countryContent = new GameObject("Content");
+        _countryContent.transform.SetParent(cgViewport.transform, false);
+        RectTransform cgConRT = _countryContent.AddComponent<RectTransform>();
+        cgConRT.anchorMin = new Vector2(0f, 1f); cgConRT.anchorMax = new Vector2(1f, 1f);
+        cgConRT.pivot = new Vector2(0.5f, 1f);
+        cgConRT.offsetMin = Vector2.zero; cgConRT.offsetMax = Vector2.zero;
+        GridLayoutGroup cgGlg = _countryContent.AddComponent<GridLayoutGroup>();
+        cgGlg.cellSize = new Vector2(224f, 30f); cgGlg.spacing = new Vector2(4f, 4f);
+        cgGlg.padding = new RectOffset(8, 8, 8, 8);
+        cgGlg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        cgGlg.constraintCount = 8;
+        ContentSizeFitter cgCsf = _countryContent.AddComponent<ContentSizeFitter>();
+        cgCsf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        cgScroll.viewport = cgVpRT;
+        cgScroll.content = cgConRT;
+        _countryGrid.SetActive(false);
+
+        // Bouton Démarrer
+        GameObject startGO = new GameObject("VSP_StartBtn");
+        startGO.transform.SetParent(_overlay.transform, false);
+        RectTransform startRT = startGO.AddComponent<RectTransform>();
+        startRT.anchorMin = new Vector2(0.3f, 0.42f); startRT.anchorMax = new Vector2(0.7f, 0.42f);
+        startRT.offsetMin = new Vector2(0f, -24f); startRT.offsetMax = new Vector2(0f, 24f);
+        Image startImg = startGO.AddComponent<Image>();
+        startImg.color = new Color(0.55f, 0.10f, 0.10f, 1f);
+        _startButton = startGO.AddComponent<Button>();
+        ColorBlock sbcb = ColorBlock.defaultColorBlock;
+        sbcb.normalColor    = new Color(0.75f, 0.12f, 0.12f, 1f);
+        sbcb.highlightedColor = new Color(0.92f, 0.20f, 0.20f, 1f);
+        sbcb.pressedColor   = new Color(0.50f, 0.08f, 0.08f, 1f);
+        sbcb.disabledColor  = new Color(0.35f, 0.35f, 0.35f, 1f);
+        _startButton.colors = sbcb; _startButton.targetGraphic = startImg;
+        _startButton.interactable = false;
+        _startButton.onClick.AddListener(OnStartClicked);
+
+        GameObject startTextGO = new GameObject("Text");
+        startTextGO.transform.SetParent(startGO.transform, false);
+        _startButtonText = startTextGO.AddComponent<TextMeshProUGUI>();
+        _startButtonText.text = "Sélectionnez un virus et un pays";
+        _startButtonText.fontSize = 15f; _startButtonText.fontStyle = FontStyles.Bold;
+        _startButtonText.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+        _startButtonText.alignment = TextAlignmentOptions.Center;
+        RectTransform stRT = startTextGO.GetComponent<RectTransform>();
+        stRT.anchorMin = Vector2.zero; stRT.anchorMax = Vector2.one;
+        stRT.offsetMin = Vector2.zero; stRT.offsetMax = Vector2.zero;
+    }
+
+    // ─── Sélection virus ──────────────────────────────────────
+    private void SelectVirus(int index)
+    {
+        _selectedVirus = Entries[index].type;
+        for (int i = 0; i < _virusCardBorders.Length; i++)
+        {
+            bool selected = i == index;
+            Color ec = Entries[i].color;
+            _virusCardBorders[i].color = selected
+                ? new Color(0.22f, 0.22f, 0.22f, 1f)
+                : new Color(0.14f, 0.14f, 0.14f, 1f);
+            if (_cardSelectionGlows != null && i < _cardSelectionGlows.Length && _cardSelectionGlows[i] != null)
+                _cardSelectionGlows[i].color = selected
+                    ? new Color(ec.r, ec.g, ec.b, 0.22f)
+                    : new Color(ec.r, ec.g, ec.b, 0f);
+        }
+        UpdateStartButton();
+    }
+
+    // ─── Grille continent ──────────────────────────────────────
+    private void ShowContinentCountries(string[] countries, Color accentColor)
+    {
+        if (_countryContent == null) return;
+        foreach (Transform child in _countryContent.transform)
+            Destroy(child.gameObject);
+        _countryGrid.SetActive(true);
+
+        // Scroll back to top
+        ScrollRect sr = _countryGrid.GetComponent<ScrollRect>();
+        if (sr != null) sr.verticalNormalizedPosition = 1f;
+
+        Color borderCol = accentColor;
+        Color normalBg  = new Color(0.14f, 0.14f, 0.14f, 1f);
+        Color hoverBg   = new Color(accentColor.r * 0.22f, accentColor.g * 0.22f, accentColor.b * 0.22f, 1f);
+
+        foreach (string country in countries)
+        {
+            string cap = country;
+            GameObject btnGO = new GameObject(country);
+            btnGO.transform.SetParent(_countryContent.transform, false);
             Image btnImg = btnGO.AddComponent<Image>();
-            btnImg.color = new Color(0.20f, 0.20f, 0.20f, 1f);
-            Outline btnOutline = btnGO.AddComponent<Outline>();
-            btnOutline.effectColor    = new Color(entry.color.r, entry.color.g, entry.color.b, 0.55f);
-            btnOutline.effectDistance = new Vector2(2f, 2f);
-
+            btnImg.color = normalBg;
             Button btn = btnGO.AddComponent<Button>();
-            ColorBlock cb = btn.colors;
-            cb.normalColor      = new Color(0.20f, 0.20f, 0.20f, 1f);
-            cb.highlightedColor = new Color(0.28f, 0.28f, 0.28f, 1f);
-            cb.pressedColor     = new Color(0.15f, 0.15f, 0.15f, 1f);
-            btn.colors = cb;
-            btn.targetGraphic = btnImg;
+            ColorBlock cb = ColorBlock.defaultColorBlock;
+            cb.normalColor      = normalBg;
+            cb.highlightedColor = hoverBg;
+            cb.pressedColor     = new Color(0.08f, 0.08f, 0.08f, 1f);
+            cb.selectedColor    = new Color(accentColor.r * 0.35f, accentColor.g * 0.35f, accentColor.b * 0.35f, 1f);
+            btn.colors = cb; btn.targetGraphic = btnImg;
+            btn.onClick.AddListener(() => SelectCountry(cap));
+            // Bande colorée gauche
+            GameObject borderGO = new GameObject("Border");
+            borderGO.transform.SetParent(btnGO.transform, false);
+            Image borderImg = borderGO.AddComponent<Image>();
+            borderImg.color = borderCol;
+            RectTransform borderRT = borderGO.GetComponent<RectTransform>();
+            borderRT.anchorMin = new Vector2(0f, 0f); borderRT.anchorMax = new Vector2(0f, 1f);
+            borderRT.pivot     = new Vector2(0f, 0.5f);
+            borderRT.offsetMin = new Vector2(0f, 0f); borderRT.offsetMax = new Vector2(3f, 0f);
+            // Label
+            GameObject lblGO = new GameObject("L");
+            lblGO.transform.SetParent(btnGO.transform, false);
+            TextMeshProUGUI lbl = lblGO.AddComponent<TextMeshProUGUI>();
+            lbl.text = country; lbl.fontSize = 10f;
+            lbl.color = new Color(0.90f, 0.90f, 0.90f, 1f);
+            lbl.alignment = TextAlignmentOptions.Left;
+            lbl.overflowMode = TextOverflowModes.Ellipsis;
+            RectTransform lblRT = lblGO.GetComponent<RectTransform>();
+            lblRT.anchorMin = Vector2.zero; lblRT.anchorMax = Vector2.one;
+            lblRT.offsetMin = new Vector2(8f, 2f); lblRT.offsetMax = new Vector2(-4f, -2f);
+        }
+    }
 
-            // Label + description dans le bouton
-            GameObject labelGO = new GameObject("Label");
-            labelGO.transform.SetParent(btnGO.transform, false);
-            RectTransform labelRT = labelGO.AddComponent<RectTransform>();
-            labelRT.anchorMin        = new Vector2(0f, 0.5f);
-            labelRT.anchorMax        = new Vector2(1f, 1f);
-            labelRT.offsetMin        = new Vector2(14f, 0f);
-            labelRT.offsetMax        = new Vector2(-14f, -4f);
-            TextMeshProUGUI labelTxt = labelGO.AddComponent<TextMeshProUGUI>();
-            labelTxt.text      = entry.label;
-            labelTxt.fontSize  = 15f;
-            labelTxt.fontStyle = FontStyles.Bold;
-            labelTxt.color     = entry.color;
-            labelTxt.alignment = TextAlignmentOptions.Left;
+    private void SelectCountry(string country)
+    {
+        _selectedCountry = country;
+        if (_countryGrid != null) _countryGrid.SetActive(false);
+        if (_selectedCountryLabel != null)
+            _selectedCountryLabel.text = $"{country}";
+        UpdateStartButton();
+    }
 
-            GameObject descGO = new GameObject("Desc");
-            descGO.transform.SetParent(btnGO.transform, false);
-            RectTransform descRT = descGO.AddComponent<RectTransform>();
-            descRT.anchorMin        = new Vector2(0f, 0f);
-            descRT.anchorMax        = new Vector2(1f, 0.5f);
-            descRT.offsetMin        = new Vector2(14f, 4f);
-            descRT.offsetMax        = new Vector2(-14f, 0f);
-            TextMeshProUGUI descTxt = descGO.AddComponent<TextMeshProUGUI>();
-            descTxt.text      = entry.desc;
-            descTxt.fontSize  = 11f;
-            descTxt.color     = new Color(0.75f, 0.75f, 0.75f, 1f);
-            descTxt.alignment = TextAlignmentOptions.Left;
 
-            VirusType captured = entry.type;
-            btn.onClick.AddListener(() =>
-            {
-                onSelected(captured);
-                Destroy(overlay);
-                Destroy(gameObject);
-            });
+    // ─── Bouton Démarrer ──────────────────────────────────────
+    private void UpdateStartButton()
+    {
+        bool ready = _selectedVirus.HasValue && !string.IsNullOrEmpty(_selectedCountry);
+        _startButton.interactable = ready;
+        if (_startButtonText != null)
+            _startButtonText.text = ready ? "DÉMARRER L'INFECTION" : "Sélectionnez un virus et un pays";
+        if (_startButton.targetGraphic is Image img)
+            img.color = ready ? new Color(0.75f, 0.12f, 0.12f, 1f) : new Color(0.35f, 0.35f, 0.35f, 1f);
+    }
+
+    private void OnStartClicked()
+    {
+        if (!_selectedVirus.HasValue || string.IsNullOrEmpty(_selectedCountry)) return;
+        VirusType virus = _selectedVirus.Value;
+        string country = _selectedCountry;
+
+        // Remplacer l'overlay par une barre de chargement
+        StartCoroutine(ShowLoadingThenStart(virus, country));
+    }
+
+    // ─── Écran de chargement ──────────────────────────────────
+    private IEnumerator ShowLoadingThenStart(VirusType virus, string country)
+    {
+        // Remplacer l'overlay par loading screen
+        Destroy(_overlay);
+
+        GameObject loadingGO = new GameObject("VSP_Loading");
+        loadingGO.transform.SetParent(_canvas.transform, false);
+        Image loadBg = loadingGO.AddComponent<Image>();
+        loadBg.color = new Color(0.05f, 0.05f, 0.05f, 0.97f);
+        RectTransform loadRT = loadingGO.GetComponent<RectTransform>();
+        loadRT.anchorMin = Vector2.zero; loadRT.anchorMax = Vector2.one;
+        loadRT.offsetMin = Vector2.zero; loadRT.offsetMax = Vector2.zero;
+
+        // Titre
+        MakeText(loadingGO, "LoadTitle", "GÉNÉRATION DU MONDE EN COURS", 22f, FontStyles.Bold, Color.white,
+            new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
+            new Vector2(0f, 36f), new Vector2(0f, 70f), TextAlignmentOptions.Center);
+
+        // Sous-titre
+        MakeText(loadingGO, "LoadSub", "Cartographie mondiale en cours de rendu...", 13f, FontStyles.Italic,
+            new Color(0.6f, 0.6f, 0.6f, 1f),
+            new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
+            new Vector2(0f, 8f), new Vector2(0f, 34f), TextAlignmentOptions.Center);
+
+        // Barre de fond
+        GameObject barBg = new GameObject("BarBg");
+        barBg.transform.SetParent(loadingGO.transform, false);
+        Image barBgImg = barBg.AddComponent<Image>();
+        barBgImg.color = new Color(0.2f, 0.2f, 0.2f, 1f);
+        RectTransform barBgRT = barBg.GetComponent<RectTransform>();
+        barBgRT.anchorMin = new Vector2(0.15f, 0.5f);
+        barBgRT.anchorMax = new Vector2(0.85f, 0.5f);
+        barBgRT.offsetMin = new Vector2(0f, -22f);
+        barBgRT.offsetMax = new Vector2(0f, -6f);
+
+        // Barre de progression (fill)
+        GameObject barFill = new GameObject("BarFill");
+        barFill.transform.SetParent(barBg.transform, false);
+        Image barFillImg = barFill.AddComponent<Image>();
+        barFillImg.color = new Color(0.85f, 0.22f, 0.22f, 1f);
+        barFillImg.type = Image.Type.Filled;
+        barFillImg.fillMethod = Image.FillMethod.Horizontal;
+        barFillImg.fillAmount = 0f;
+        RectTransform fillRT = barFill.GetComponent<RectTransform>();
+        fillRT.anchorMin = Vector2.zero; fillRT.anchorMax = Vector2.one;
+        fillRT.offsetMin = Vector2.zero; fillRT.offsetMax = Vector2.zero;
+
+        // Label pourcentage
+        TextMeshProUGUI pctLabel = MakeText(loadingGO, "Pct", "0%", 12f, FontStyles.Bold,
+            new Color(0.75f, 0.75f, 0.75f, 1f),
+            new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
+            new Vector2(0f, -28f), new Vector2(0f, -8f), TextAlignmentOptions.Center)
+            .GetComponent<TextMeshProUGUI>();
+
+        // Attendre que le chargement soit terminé
+        GeoJsonLoader loader = FindAnyObjectByType<GeoJsonLoader>();
+        while (loader == null || !loader.IsLoaded)
+        {
+            float progress = loader != null ? loader.LoadProgress : 0f;
+            barFillImg.fillAmount = progress;
+            if (pctLabel != null) pctLabel.text = $"{Mathf.RoundToInt(progress * 100f)}%";
+            yield return null;
+        }
+
+        barFillImg.fillAmount = 1f;
+        if (pctLabel != null) pctLabel.text = "100%";
+
+        // Courte pause pour que le joueur voit 100%
+        yield return new WaitForSeconds(0.4f);
+
+        Destroy(loadingGO);
+        // Re-activer exactement les canvas qu'on avait cachés
+        foreach (var go in _hiddenCanvases)
+            if (go != null) go.SetActive(true);
+        _hiddenCanvases.Clear();
+        if (_canvas != null) Destroy(_canvas.gameObject);
+        Destroy(gameObject);
+        _onReady?.Invoke(virus, country);
+    }
+
+    // ─── Helpers UI ───────────────────────────────────────────
+    private static GameObject MakePanel(GameObject parent, string name,
+        Vector2 anchorMin, Vector2 anchorMax, Vector4 offsets, Color color)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        Image img = go.AddComponent<Image>();
+        img.color = color;
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = anchorMin;
+        rt.anchorMax = anchorMax;
+        rt.offsetMin = new Vector2(offsets.x, offsets.y);
+        rt.offsetMax = new Vector2(-offsets.z, -offsets.w);
+        return go;
+    }
+
+    private static GameObject MakeText(GameObject parent, string name, string text,
+        float fontSize, FontStyles style, Color color,
+        Vector2 anchorMin, Vector2 anchorMax,
+        Vector2 offsetMin, Vector2 offsetMax,
+        TextAlignmentOptions alignment,
+        TextOverflowModes overflow = TextOverflowModes.Ellipsis)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        TextMeshProUGUI tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.fontStyle = style;
+        tmp.color = color;
+        tmp.alignment = alignment;
+        tmp.overflowMode = overflow;
+        tmp.enableWordWrapping = true;
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = anchorMin;
+        rt.anchorMax = anchorMax;
+        rt.offsetMin = offsetMin;
+        rt.offsetMax = offsetMax;
+        return go;
+    }
+
+    // ─── Data class ───────────────────────────────────────────
+    private class VirusEntry
+    {
+        public VirusType type;
+        public string label;
+        public string tagline;
+        public string description;
+        public string capabilities;
+        public Color color;
+
+        public VirusEntry(VirusType t, string l, string tag, string desc, string caps, Color c)
+        {
+            type = t; label = l; tagline = tag; description = desc; capabilities = caps; color = c;
         }
     }
 }

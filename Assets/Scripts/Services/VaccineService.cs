@@ -16,13 +16,13 @@ public static class VaccineService
             return;
         }
 
-        int totalPopulation = 0;
-        int totalAlive = 0;
+        long totalPopulation = 0;
+        long totalAlive      = 0;
 
         foreach (CountryObject country in countries)
         {
             totalPopulation += country.population.total;
-            totalAlive += country.population.GetAlive();
+            totalAlive      += country.population.GetAlive();
         }
 
         float aliveRatio = totalPopulation > 0 ? (float)totalAlive / totalPopulation : 0f;
@@ -37,13 +37,13 @@ public static class VaccineService
         if (virus == null || virus.vaccinePreparationProgress < 100f)
             return 0;
 
-        int worldNewVaccinated = 0;
-        int worldAlive = 0;
-        int worldInfected = 0;
+        int  worldNewVaccinated = 0;
+        long worldAlive         = 0;
+        long worldInfected      = 0;
 
         foreach (CountryObject country in countries)
         {
-            worldAlive += country.population.GetAlive();
+            worldAlive    += country.population.GetAlive();
             worldInfected += country.population.infected;
         }
 
@@ -82,14 +82,11 @@ public static class VaccineService
         return worldNewVaccinated;
     }
 
-    public static int GetTotalVaccinated(List<CountryObject> countries)
+    public static long GetTotalVaccinated(List<CountryObject> countries)
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in countries)
-        {
             total += country.population.vaccinated;
-        }
-
         return total;
     }
 }

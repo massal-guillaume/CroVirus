@@ -36,14 +36,14 @@ public class StatusBar : MonoBehaviour
 
     private void UpdateStatusBar()
     {
-        int totalPopulation = GetTotalPopulation();
-        int totalInfected = Mathf.Max(0, GetTotalInfected());
-        int totalDead = Mathf.Max(0, GetTotalDead());
+        long totalPopulation = GetTotalPopulation();
+        long totalInfected   = System.Math.Max(0L, GetTotalInfected());
+        long totalDead       = System.Math.Max(0L, GetTotalDead());
         float vaccineProgress = GetVaccinePreparationPercent();
-        int totalHealthy = Mathf.Max(0, totalPopulation - totalInfected - totalDead);
+        long totalHealthy = System.Math.Max(0L, totalPopulation - totalInfected - totalDead);
 
         // Affichage robuste: si les donnees sont desynchronisees, on normalise sur le plus grand total coherent.
-        int displayTotal = Mathf.Max(totalPopulation, totalInfected + totalDead + totalHealthy);
+        long displayTotal = System.Math.Max(totalPopulation, totalInfected + totalDead + totalHealthy);
 
         // FORCER LES COULEURS BLANCHES POUR TOUS LES TEXTES
         if (infectedText != null)
@@ -205,33 +205,27 @@ public class StatusBar : MonoBehaviour
         }
     }
 
-    private int GetTotalPopulation()
+    private long GetTotalPopulation()
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in gameManager.countries)
-        {
             total += country.population.total;
-        }
         return total;
     }
 
-    private int GetTotalInfected()
+    private long GetTotalInfected()
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in gameManager.countries)
-        {
             total += country.population.infected;
-        }
         return total;
     }
 
-    private int GetTotalDead()
+    private long GetTotalDead()
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in gameManager.countries)
-        {
             total += country.population.dead;
-        }
         return total;
     }
 

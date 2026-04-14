@@ -6598,7 +6598,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2018880064}
-  - component: {fileID: 2018880063}
+  - component: {fileID: 2018880065}
   m_Layer: 0
   m_Name: EventManager
   m_TagString: Untagged
@@ -6606,19 +6606,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2018880063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2018880062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e41373fb7ecf3649aaa83706a6122a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EventManager
-  assignedEvents: []
 --- !u!4 &2018880064
 Transform:
   m_ObjectHideFlags: 0
@@ -6634,6 +6621,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2018880065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018880062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e1dfe5a8aef5e4e809ea3f6b349ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventManager
+  randomEventChance: 0.03
+  randomEvents: []
+  triggerEvents: []
+  vaccineEventIndex: 0
+  eventActive: 0
 --- !u!1 &2044426249
 GameObject:
   m_ObjectHideFlags: 0

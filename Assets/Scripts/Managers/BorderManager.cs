@@ -1,8 +1,24 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class BorderManager
 {
+    [Serializable]
+    private class BorderEntry
+    {
+        public string from;
+        public string to;
+        public string type;
+        public float strength;
+    }
+
+    [Serializable]
+    private class BorderList
+    {
+        public List<BorderEntry> borders;
+    }
+
     private static List<CountryLink> borders = new List<CountryLink>();
     private static bool initialized = false;
 
@@ -12,26 +28,42 @@ public static class BorderManager
 
         borders.Clear();
 
-        // Récupérer les pays depuis CountryManager
-        CountryObject france = CountryManager.GetCountry("France");
-        CountryObject germany = CountryManager.GetCountry("Germany");
-        CountryObject italy = CountryManager.GetCountry("Italy");
+        TextAsset jsonFile = Resources.Load<TextAsset>("border");
+        if (jsonFile != null)
+        {
+            BorderList data = JsonUtility.FromJson<BorderList>(jsonFile.text);
+            if (data != null && data.borders != null)
+            {
+                foreach (BorderEntry entry in data.borders)
+                {
+                    CountryObject source = CountryManager.GetCountry(entry.from);
+                    CountryObject destination = CountryManager.GetCountry(entry.to);
 
-        // Créer les liaisons entre les pays (BIDIRECTIONNELLES)
-        // Les intensités représentent % de population qui voyagent via ce mode
-        
-        // France ↔ Germany (frontière terrestre, très accessible)
-        AddBidirectionalBorder(france, germany, TransportType.Car, 0.01f);      // 1% en voiture
-        AddBidirectionalBorder(france, germany, TransportType.Airplane, 0.001f); // 0.1% en avion
-        
-        // Germany ↔ Italy (frontière terrestre alpine)
-        AddBidirectionalBorder(germany, italy, TransportType.Car, 0.005f);      // 0.5% en voiture
-        AddBidirectionalBorder(germany, italy, TransportType.Airplane, 0.0005f); // 0.05% en avion
-        
-        // France ↔ Italy (frontière terrestre + voie maritime)
-        AddBidirectionalBorder(france, italy, TransportType.Car, 0.003f);        // 0.3% en voiture
-        AddBidirectionalBorder(france, italy, TransportType.Airplane, 0.0008f);  // 0.08% en avion
-        AddBidirectionalBorder(france, italy, TransportType.Boat, 0.0002f);      // 0.02% en bateau
+                    if (source == null)
+                    {
+                        Debug.LogWarning($"BorderManager: pays introuvable '{entry.from}'");
+                        continue;
+                    }
+                    if (destination == null)
+                    {
+                        Debug.LogWarning($"BorderManager: pays introuvable '{entry.to}'");
+                        continue;
+                    }
+
+                    if (!Enum.TryParse(entry.type, true, out TransportType transportType))
+                    {
+                        Debug.LogWarning($"BorderManager: type de transport inconnu '{entry.type}', utilisation de Car par défaut");
+                        transportType = TransportType.Car;
+                    }
+
+                    AddBidirectionalBorder(source, destination, transportType, entry.strength);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("BorderManager: fichier 'border.json' introuvable dans Resources/");
+        }
 
         initialized = true;
         Debug.Log($"BorderManager initialisé avec {borders.Count} liaisons bidirectionnelles");

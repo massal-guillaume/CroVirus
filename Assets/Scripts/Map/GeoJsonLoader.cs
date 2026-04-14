@@ -23,6 +23,16 @@ public class GeoJsonLoader : MonoBehaviour
     [Header("Debug")]
     public bool showLogs = true;
 
+    public static GeoJsonLoader Instance { get; private set; }
+    public float LoadProgress { get; private set; }
+    public bool IsLoaded { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    // Chargement démarre immédiatement en arrière-plan
     void Start() => StartCoroutine(LoadGeoJson());
 
     IEnumerator LoadGeoJson()
@@ -38,7 +48,7 @@ public class GeoJsonLoader : MonoBehaviour
                 yield break;
             }
             string json = System.IO.File.ReadAllText(path);
-            ParseAndBuild(json);
+            yield return StartCoroutine(ParseAndBuildAsync(json));
             yield break;
         }
 
@@ -54,89 +64,63 @@ public class GeoJsonLoader : MonoBehaviour
             yield break;
         }
 
-        ParseAndBuild(req.downloadHandler.text);
+        yield return StartCoroutine(ParseAndBuildAsync(req.downloadHandler.text));
     }
 
-    void ParseAndBuild(string json)
+    IEnumerator ParseAndBuildAsync(string json)
     {
-        List<CountryData> countries = GeoJsonParser.Parse(json);
+        List<CountryData> allData = GeoJsonParser.Parse(json);
+        int total = Mathf.Max(1, allData.Count);
         int built = 0;
 
-        foreach (var data in countries)
+        for (int idx = 0; idx < allData.Count; idx++)
         {
-            if (string.IsNullOrEmpty(data.name)) continue;
-
-            // Debug Nicaragua specifically
-            if (data.name == "Nicaragua" && showLogs)
+            var data = allData[idx];
+            if (!string.IsNullOrEmpty(data.name))
             {
-                Debug.Log($"[GeoJsonLoader] Nicaragua polygon count: {data.polygon?.Count}");
-                if (data.polygon != null && data.polygon.Count > 0)
-                {
-                    var ring = data.polygon[0];
-                    Debug.Log($"[GeoJsonLoader] Nicaragua outer ring: {ring.Count} points");
-                    if (ring.Count > 0)
-                    {
-                        Debug.Log($"[GeoJsonLoader] Nicaragua first 3 points (raw):");
-                        for (int i = 0; i < Mathf.Min(3, ring.Count); i++)
-                            Debug.Log($"  [{i}] = {ring[i]}");
-                    }
-                }
+                GameObject go = new GameObject(data.name);
+                go.transform.parent = transform;
+
+                Country comp = go.AddComponent<Country>();
+                comp.countryName = data.name;
+                comp.countryCode = data.isoCode ?? "";
+
+                if (data.isMultiPolygon)
+                    BuildMultiPolygon(go, data.multiPolygon);
+                else
+                    BuildPolygon(go, data.polygon);
+
+                WorldMap.Instance?.RegisterCountry(comp);
+                built++;
             }
 
-            GameObject go = new GameObject(data.name);
-            go.transform.parent = transform;
-
-            Country comp = go.AddComponent<Country>();
-            comp.countryName = data.name;
-            comp.countryCode = data.isoCode ?? "";
-
-            if (data.isMultiPolygon)
-                BuildMultiPolygon(go, data.multiPolygon);
-            else
-                BuildPolygon(go, data.polygon);
-
-            WorldMap.Instance?.RegisterCountry(comp);
-            built++;
+            LoadProgress = (float)(idx + 1) / total;
+            // Yield every 5 pays pour rester fluide
+            if (idx % 5 == 0) yield return null;
         }
 
+        LoadProgress = 1f;
         if (showLogs) Debug.Log($"[GeoJsonLoader] {built} pays générés.");
 
-        // Réinitialiser la caméra au centre de la map
         var cam = Camera.main;
         if (cam != null)
         {
             var camController = cam.GetComponent<MapCameraController>();
             if (camController != null)
-            {
-                Debug.Log("[GeoJsonLoader] ResetView() called");
                 camController.ResetView();
-            }
             else
-            {
                 Debug.LogWarning("[GeoJsonLoader] MapCameraController not found on Main Camera!");
-            }
         }
         else
-        {
             Debug.LogWarning("[GeoJsonLoader] Main Camera not found!");
+
+        if (showLogs)
+        {
+            var allCountries = GetComponentsInChildren<MeshRenderer>(false);
+            Debug.Log($"[GeoJsonLoader] Total MeshRenderers: {allCountries.Length}");
         }
 
-        // Debug: Check mesh bounds
-        var allCountries = GetComponentsInChildren<MeshRenderer>(false);
-        Debug.Log($"[GeoJsonLoader] Total MeshRenderers: {allCountries.Length}");
-        
-        int visibleMeshes = 0;
-        foreach(var mr in allCountries)
-        {
-            var bounds = mr.bounds;
-            if(bounds.size.magnitude > 0.001f)
-            {
-                visibleMeshes++;
-                if(visibleMeshes <= 5) // Log first 5 to avoid spam
-                    Debug.Log($"[GeoJsonLoader] {mr.gameObject.name}: bounds center={bounds.center}, size={bounds.size}");
-            }
-        }
-        Debug.Log($"[GeoJsonLoader] Meshes with size > 0.001: {visibleMeshes}");
+        IsLoaded = true;
     }
 
     void BuildPolygon(GameObject parent, List<List<Vector2>> rings)

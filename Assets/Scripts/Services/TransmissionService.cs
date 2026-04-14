@@ -113,20 +113,20 @@ public class TransmissionService
 
     public static void SimulateMortality(List<CountryObject> countries, Virus virus)
     {
-        int worldTotal = 0;
-        int worldInfected = 0;
-        int worldDead = 0;
+        long worldTotal    = 0;
+        long worldInfected = 0;
+        long worldDead     = 0;
 
         for (int i = 0; i < countries.Count; i++)
         {
             Population p = countries[i].population;
-            worldTotal += p.total;
+            worldTotal    += p.total;
             worldInfected += p.infected;
-            worldDead += p.dead;
+            worldDead     += p.dead;
         }
 
-        int worldHealthy = Mathf.Max(0, worldTotal - worldInfected - worldDead);
-        int worldLiving = Mathf.Max(0, worldTotal - worldDead);
+        long worldHealthy = System.Math.Max(0L, worldTotal - worldInfected - worldDead);
+        long worldLiving  = System.Math.Max(0L, worldTotal - worldDead);
         bool allWorldLivingInfected = worldLiving > 0 && worldHealthy == 0;
 
         foreach (CountryObject country in countries)
@@ -246,23 +246,19 @@ public class TransmissionService
         }
     }
 
-    public static int GetTotalInfected(List<CountryObject> countries)
+    public static long GetTotalInfected(List<CountryObject> countries)
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in countries)
-        {
             total += country.population.infected;
-        }
         return total;
     }
 
-    public static int GetTotalDead(List<CountryObject> countries)
+    public static long GetTotalDead(List<CountryObject> countries)
     {
-        int total = 0;
+        long total = 0;
         foreach (CountryObject country in countries)
-        {
             total += country.population.dead;
-        }
         return total;
     }
 
@@ -274,6 +270,19 @@ public class TransmissionService
         // Chaque personne a un % de chance de voyager (rare au début)
         foreach (CountryObject sourceCountry in countries)
         {
+            // Frontières fermées : permanente ou temporaire
+            if (sourceCountry.borderPermanentlyClosed)
+            {
+                Debug.Log($"  [{sourceCountry.name}] Frontières fermées DÉFINITIVEMENT, spread bloqué");
+                continue;
+            }
+            if (sourceCountry.borderClosedTurns > 0)
+            {
+                sourceCountry.borderClosedTurns--;
+                Debug.Log($"  [{sourceCountry.name}] Frontières fermées ({sourceCountry.borderClosedTurns} tours restants), spread bloqué");
+                continue;
+            }
+
             Population sourcePop = sourceCountry.population;
             
             // Récupérer toutes les frontières sortantes

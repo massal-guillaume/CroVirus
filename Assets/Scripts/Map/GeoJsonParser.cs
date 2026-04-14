@@ -12,6 +12,26 @@ using System.Text.RegularExpressions;
 /// </summary>
 public static class GeoJsonParser
 {
+    /// <summary>
+    /// Parse rapide qui extrait uniquement les noms de pays (pour autocomplete).
+    /// Beaucoup plus rapide que Parse() car on évite le parsing des coordonnées.
+    /// </summary>
+    public static List<string> ParseCountryNames(string json)
+    {
+        var names = new List<string>();
+        var namePattern = new Regex(@"""name""\s*:\s*""([^""]+)""");
+        var matches = namePattern.Matches(json);
+        var seen = new System.Collections.Generic.HashSet<string>();
+        foreach (System.Text.RegularExpressions.Match m in matches)
+        {
+            string name = m.Groups[1].Value;
+            if (seen.Add(name))
+                names.Add(name);
+        }
+        names.Sort(System.StringComparer.OrdinalIgnoreCase);
+        return names;
+    }
+
     public static List<CountryData> Parse(string json)
     {
         var countries = new List<CountryData>();
