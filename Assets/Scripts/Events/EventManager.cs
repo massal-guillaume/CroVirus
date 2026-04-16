@@ -6,7 +6,7 @@ public class EventManager : MonoBehaviour
 {
     public static EventManager Instance { get; private set; }
 
-    public float randomEventChance = 0.02f;
+    public float randomEventChance = 0.04f;
     public List<Event> randomEvents = new List<Event>();
     public List<Event> triggerEvents = new List<Event>();
     public int vaccineEventIndex = 0; // For ordered vaccine events
@@ -564,9 +564,9 @@ public class EventManager : MonoBehaviour
             () =>
             {
                 if (vaccineEventIndex != 1) return false;
-                int totalPop = 0, totalInfected = 0;
-                foreach (var c in gameManager.countries) { totalPop += c.population.total; totalInfected += c.population.infected; }
-                return totalPop > 0 && (float)totalInfected / totalPop >= 0.05f;
+                int totalInfected = 0;
+                foreach (var c in gameManager.countries) totalInfected += c.population.infected;
+                return gameManager.initialWorldPopulation > 0 && (float)totalInfected / gameManager.initialWorldPopulation >= 0.06f;
             },
             () =>
             {
@@ -588,9 +588,9 @@ public class EventManager : MonoBehaviour
             () =>
             {
                 if (vaccineEventIndex != 2) return false;
-                int totalPop = 0, totalInfected = 0, totalDead = 0;
-                foreach (var c in gameManager.countries) { totalPop += c.population.total; totalInfected += c.population.infected; totalDead += c.population.dead; }
-                return totalPop > 0 && ((float)totalInfected / totalPop >= 0.20f || totalDead >= 10000000);
+                int totalInfected = 0, totalDead = 0;
+                foreach (var c in gameManager.countries) { totalInfected += c.population.infected; totalDead += c.population.dead; }
+                return gameManager.initialWorldPopulation > 0 && ((float)totalInfected / gameManager.initialWorldPopulation >= 0.20f || totalDead >= 5000000);
             },
             () =>
             {
@@ -614,9 +614,9 @@ public class EventManager : MonoBehaviour
             () =>
             {
                 if (vaccineEventIndex != 3) return false;
-                int totalPop = 0, totalInfected = 0, totalDead = 0;
-                foreach (var c in gameManager.countries) { totalPop += c.population.total; totalInfected += c.population.infected; totalDead += c.population.dead; }
-                return totalPop > 0 && ((float)totalInfected / totalPop >= 0.40f || totalDead >= 100000000);
+                int totalInfected = 0, totalDead = 0;
+                foreach (var c in gameManager.countries) { totalInfected += c.population.infected; totalDead += c.population.dead; }
+                return gameManager.initialWorldPopulation > 0 && ((float)totalInfected / gameManager.initialWorldPopulation >= 0.45f || totalDead >= 40000000);
             },
             () =>
             {
@@ -636,7 +636,7 @@ public class EventManager : MonoBehaviour
             "Coopération Mondiale",
             "Tous les laboratoires du monde travaillent ensemble pour développer un vaccin.",
             Event.EventType.Trigger,
-            () => vaccineEventIndex == 4 && gameManager.virus.vaccinePreparationProgress >= 60f,
+            () => vaccineEventIndex == 4 && gameManager.virus.vaccinePreparationProgress >= 50f,
             () =>
             {
                 gameManager.virus.vaccineBasePrepRate *= 1.10f;
@@ -657,26 +657,21 @@ public class EventManager : MonoBehaviour
         if (randomEvents.Count == 0 && triggerEvents.Count == 0)
         {
             var gm = FindAnyObjectByType<GameManager>();
-            if (gm != null) { Debug.Log("[EventManager] Lists empty, re-initializing events."); InitializeEvents(gm); }
+            if (gm != null) InitializeEvents(gm);
         }
 
-        Debug.Log($"[EventManager] Turn {turn} | eventActive={eventActive} | randoms={randomEvents.Count} | triggers={triggerEvents.Count} | Notification={(Notification.Instance != null ? "OK" : "NULL")}");
-
-        if (turn <= 5) { Debug.Log("[EventManager] Skipped: grace period (turn <= 5)"); return; }
-
-        if (eventActive) { Debug.Log("[EventManager] Skipped: eventActive is true"); return; }
+        if (turn <= 5) return;
+        if (eventActive) return;
 
         // Try random events first
         var eligibleRandoms = randomEvents.FindAll(e =>
             (e.repeatable ? (turn - e.lastTriggeredTurn >= e.cooldownTurns) : !e.triggered)
             && (e.condition == null || e.condition()));
         float roll = UnityEngine.Random.value;
-        Debug.Log($"[EventManager] Eligible randoms: {eligibleRandoms.Count} | roll={roll:F2} vs chance={randomEventChance}");
         if (eligibleRandoms.Count > 0 && roll < randomEventChance)
         {
             int idx = UnityEngine.Random.Range(0, eligibleRandoms.Count);
             var evt = eligibleRandoms[idx];
-            Debug.Log($"[EventManager] Triggering random: {evt.name}");
             evt.effect?.Invoke();
             if (evt.repeatable) evt.lastTriggeredTurn = turn;
             else evt.triggered = true;
@@ -688,7 +683,6 @@ public class EventManager : MonoBehaviour
         {
             if (!evt.triggered && (evt.condition == null || evt.condition()))
             {
-                Debug.Log($"[EventManager] Triggering trigger: {evt.name}");
                 evt.effect?.Invoke();
                 evt.triggered = true;
                 eventActive = true;

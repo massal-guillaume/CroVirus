@@ -45,11 +45,7 @@ public class TransmissionService
             // Cap au nombre de personnes saines disponibles
             int healthy = pop.GetHealthy();
             newInfected = Mathf.Min(newInfected, healthy);
-
             pop.infected += newInfected;
-            
-            if (newInfected > 0)
-                Debug.Log($"  [{country.name}] +{newInfected} infectés (temp×skills = {temperatureEffect:F2}×{transmissionModifier:F2}, accumulated: {infectionDecimals[country.name]:F2})");
         }
     }
     
@@ -113,6 +109,10 @@ public class TransmissionService
 
     public static void SimulateMortality(List<CountryObject> countries, Virus virus)
     {
+
+        if (virus.lethality <= 0f && virus.mortalityRate <= 0f)
+            return;
+
         long worldTotal    = 0;
         long worldInfected = 0;
         long worldDead     = 0;
@@ -204,7 +204,7 @@ public class TransmissionService
             if (allWorldLivingInfected)
             {
                 float deadRateWorld = worldTotal > 0 ? (float)worldDead / worldTotal : 0f;
-                float globalCollapseMultiplier = Mathf.Lerp(1.6f, 3.5f, deadRateWorld);
+                float globalCollapseMultiplier = Mathf.Lerp(8f, 40f, deadRateWorld);
                 mortalityValue *= globalCollapseMultiplier;
             }
             
@@ -240,9 +240,6 @@ public class TransmissionService
 
             pop.dead += newDeaths;
             pop.infected = Mathf.Max(0, pop.infected - newDeaths);
-            
-            if (newDeaths > 0)
-                Debug.Log($"  [{country.name}] -{newDeaths} morts (base:{baseLethality:F3} + bonus:{skillBonus:F3} [anus:{anusBonus:F3} poumon:{poumonBonus:F3} bouffe:{bouffeBonus:F3} cerveau:{cerveauBonus:F3}] => {effectiveLethality:F3}, cond:cold={isColdCountry},hot={isHotCountry},arid={isAridClimate},lowHyg={isLowHygiene},rich={isRichCountry}, bypass:{virus.immunityBypass:P0}, accumulated:{mortalityDecimals[country.name]:F2})");
         }
     }
 
@@ -262,24 +259,35 @@ public class TransmissionService
         return total;
     }
 
+    public static void Reset()
+    {
+        infectionDecimals.Clear();
+        mortalityDecimals.Clear();
+    }
+
     // ─── Transmission inter-pays ────────────────────────────────
 
     public static void SimulateInterCountrySpread(List<CountryObject> countries)
     {
         // Les voyageurs voyagent en permanence (sains ET infectés)
         // Chaque personne a un % de chance de voyager (rare au début)
+        int totalVoyages = 0;
+        int totalInfectedTravelers = 0;
+        int totalBordersLoaded = BorderManager.GetAllBorders().Count;
+        if (totalBordersLoaded == 0)
+        {
+            Debug.LogWarning("  [Voyages] AUCUNE frontière chargée ! Vérifier Assets/Resources/border.json");
+            return;
+        }
+
         foreach (CountryObject sourceCountry in countries)
         {
             // Frontières fermées : permanente ou temporaire
             if (sourceCountry.borderPermanentlyClosed)
-            {
-                Debug.Log($"  [{sourceCountry.name}] Frontières fermées DÉFINITIVEMENT, spread bloqué");
                 continue;
-            }
             if (sourceCountry.borderClosedTurns > 0)
             {
                 sourceCountry.borderClosedTurns--;
-                Debug.Log($"  [{sourceCountry.name}] Frontières fermées ({sourceCountry.borderClosedTurns} tours restants), spread bloqué");
                 continue;
             }
 
@@ -305,7 +313,8 @@ public class TransmissionService
                 
                 // Aléatoire sur le nombre d'infectés voyageurs
                 float variability = Random.Range(1f - VARIABILITY, 1f + VARIABILITY);
-                int infectedTravelers = (int)(totalTravelers * infectionRatio * sicknessTravelReduction * variability);
+                // Si le pays source est infecté à moins de 1%, aucun voyageur infecté ne part
+                int infectedTravelers = infectionRatio < 0.05f ? 0 : (int)(totalTravelers * infectionRatio * sicknessTravelReduction * variability);
                 int healthyTravelers = totalTravelers - infectedTravelers;
                 
                 // Cap aux personnes disponibles
@@ -317,15 +326,12 @@ public class TransmissionService
                 
                 if (totalTravelers > 0)
                 {
-                    // Retirer du pays source
                     sourcePop.infected -= infectedTravelers;
                     sourcePop.total -= totalTravelers;
-                    
-                    // Ajouter au pays destination
                     destPop.infected += infectedTravelers;
                     destPop.total += totalTravelers;
-                    
-                    Debug.Log($"  [{sourceCountry.name}] → [{destCountry.name}] via {border.transportType}: {infectedTravelers} infectés + {healthyTravelers} sains = {totalTravelers} voyageurs");
+                    totalVoyages++;
+                    totalInfectedTravelers += infectedTravelers;
                 }
             }
         }

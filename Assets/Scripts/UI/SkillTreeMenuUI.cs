@@ -31,6 +31,8 @@ public class SkillTreeMenuUI : MonoBehaviour
 
     public static SkillTreeMenuUI Instance { get; private set; }
 
+    public static bool IsOpen { get; private set; }
+
     public static event System.Action OnMenuOpened;
     public static event System.Action OnMenuClosed;
 
@@ -173,9 +175,6 @@ public class SkillTreeMenuUI : MonoBehaviour
         if (gameManager != null && gameManager.IsGameOver())
             return;
 
-        if (CountryInfoPopup.Instance != null)
-            CountryInfoPopup.Instance.HidePopup();
-
         if (skillTreeManager == null)
             skillTreeManager = SkillTreeManager.GetInstance();
 
@@ -196,6 +195,7 @@ public class SkillTreeMenuUI : MonoBehaviour
         }
 
         OnMenuOpened?.Invoke();
+        IsOpen = true;
         RefreshCurrentTab();
     }
 
@@ -209,6 +209,7 @@ public class SkillTreeMenuUI : MonoBehaviour
         if (gameManager != null && !gameManager.IsGameOver())
             gameManager.SetPaused(false);
 
+        IsOpen = false;
         OnMenuClosed?.Invoke();
     }
 
@@ -1198,20 +1199,20 @@ public class SkillTreeMenuUI : MonoBehaviour
             bool canUnlock = selectedSkill.CanUnlock(unlocked);
             bool canAfford = selectedSkill.CanAfford(points);
 
-            infoTitleText.text = $"{selectedSkill.name} (Achat impossible)";
+            infoTitleText.text = string.Format(LocalizationManager.Get("skill_cant_buy_suffix"), LocalizationManager.GetSkillName(selectedSkill.id, selectedSkill.name));
             if (infoImpactText != null) infoImpactText.text = "";
-            if (infoCostText != null) infoCostText.text = $"Cout: {selectedSkill.cost} | Points: {points}";
+            if (infoCostText != null) infoCostText.text = string.Format(LocalizationManager.Get("skill_cost_display"), selectedSkill.cost, points);
             if (!canUnlock)
             {
-                infoDescriptionText.text = "Prerequis non remplis pour ce skill.";
+                infoDescriptionText.text = LocalizationManager.Get("skill_prereq_unmet");
             }
             else if (!canAfford)
             {
-                infoDescriptionText.text = $"Points insuffisants: cout {selectedSkill.cost}, tu as {points}.";
+                infoDescriptionText.text = string.Format(LocalizationManager.Get("skill_insufficient_points"), selectedSkill.cost, points);
             }
             else
             {
-                infoDescriptionText.text = "Achat impossible pour une raison inconnue.";
+                infoDescriptionText.text = LocalizationManager.Get("skill_buy_fail_unknown");
             }
 
             UpdateBuyButtonState();
@@ -1231,22 +1232,22 @@ public class SkillTreeMenuUI : MonoBehaviour
             return;
         }
 
-        infoTitleText.text = selectedSkill.name;
+        infoTitleText.text = LocalizationManager.GetSkillName(selectedSkill.id, selectedSkill.name);
         infoTitleText.alignment = TMPro.TextAlignmentOptions.Center;
         infoTitleText.color = Color.white;
 
-        infoDescriptionText.text = selectedSkill.description;
+        infoDescriptionText.text = LocalizationManager.GetSkillDesc(selectedSkill.id, selectedSkill.description);
         infoDescriptionText.color = Color.white;
 
         if (infoImpactText != null)
         {
-            infoImpactText.text = selectedSkill.variableModified;
+            infoImpactText.text = LocalizationManager.GetSkillVar(selectedSkill.id, selectedSkill.variableModified);
             infoImpactText.color = new Color(1f, 0.40f, 0.40f, 1f);
         }
 
         int points = pointManager != null ? pointManager.GetCurrentPoints() : 0;
         if (infoCostText != null)
-            infoCostText.text = $"Cout: {selectedSkill.cost} | Points: {points}";
+            infoCostText.text = string.Format(LocalizationManager.Get("skill_cost_display"), selectedSkill.cost, points);
 
         UpdateBuyButtonState();
     }
@@ -1292,7 +1293,7 @@ public class SkillTreeMenuUI : MonoBehaviour
         if (selectedSkill == null)
         {
             buyButton.interactable = false;
-            buyButtonText.text = "Acheter";
+            buyButtonText.text = LocalizationManager.Get("skill_btn_buy_label");
             return;
         }
 
@@ -1307,11 +1308,11 @@ public class SkillTreeMenuUI : MonoBehaviour
 
         if (alreadyUnlocked)
         {
-            buyButtonText.text = "Acheté";
+            buyButtonText.text = LocalizationManager.Get("skill_btn_already_bought");
         }
         else
         {
-            buyButtonText.text = $"Acheter ({selectedSkill.cost})";
+            buyButtonText.text = string.Format(LocalizationManager.Get("skill_btn_buy_with_cost"), selectedSkill.cost);
         }
     }
 
@@ -1344,12 +1345,12 @@ public class SkillTreeMenuUI : MonoBehaviour
             infoTitleText.text = "Transmission";
             infoTitleText.alignment = TMPro.TextAlignmentOptions.Center;
             infoTitleText.color = Color.white;
-            infoDescriptionText.text = "Clique sur un skill rouge pour voir ses details puis achete-le avec tes Crotogenes. Les skills L2 gris se debloquent apres achat du L1.";
+        infoDescriptionText.text = LocalizationManager.Get("skill_info_default_desc_transmission");
             infoDescriptionText.color = Color.white;
             if (infoImpactText != null) infoImpactText.text = "";
             if (infoCostText != null) infoCostText.text = "";
             buyButton.interactable = false;
-            buyButtonText.text = "ACHETER";
+            buyButtonText.text = LocalizationManager.Get("skill_btn_buy_default");
             return;
         }
 
@@ -1365,13 +1366,13 @@ public class SkillTreeMenuUI : MonoBehaviour
         infoTitleText.alignment = TMPro.TextAlignmentOptions.Center;
         infoTitleText.color = GetVirusThemeColor(vt, SkillVisualState.Available);
 
-        infoDescriptionText.text = "Clique sur un skill pour voir ses details. Les skills N2 et plus se debloquent apres achat des prerequis. Tous les skills Special sont gratuits.";
+        infoDescriptionText.text = LocalizationManager.Get("skill_info_default_desc_special");
         infoDescriptionText.color = Color.white;
 
         if (infoImpactText != null) infoImpactText.text = "";
         if (infoCostText != null) infoCostText.text = "";
         buyButton.interactable = false;
-        buyButtonText.text = "ACHETER";
+        buyButtonText.text = LocalizationManager.Get("skill_btn_buy_default");
     }
 
     private void BuildSpecialTree()
@@ -1657,12 +1658,12 @@ public class SkillTreeMenuUI : MonoBehaviour
         infoTitleText.text = tabName;
         infoTitleText.alignment = TMPro.TextAlignmentOptions.Center;
         infoTitleText.color = Color.white;
-        infoDescriptionText.text = "Contenu bientot disponible. Cet onglet sera implemente dans une prochaine phase.";
+        infoDescriptionText.text = LocalizationManager.Get("skill_coming_soon_desc");
         infoDescriptionText.color = Color.white;
         if (infoImpactText != null) infoImpactText.text = "";
         if (infoCostText != null) infoCostText.text = "";
         buyButton.interactable = false;
-        buyButtonText.text = "ACHETER";
+        buyButtonText.text = LocalizationManager.Get("skill_btn_buy_default");
     }
 
     private void ClearTreeVisuals()

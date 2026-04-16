@@ -276,6 +276,12 @@ public static class CountryManager
         Debug.Log($"[CountryManager] {countries.Count} pays initialisés.");
     }
 
+    public static void Reset()
+    {
+        initialized = false;
+        countries.Clear();
+    }
+
     public static CountryObject GetCountry(string name)
     {
         // Auto-init si pas encore fait

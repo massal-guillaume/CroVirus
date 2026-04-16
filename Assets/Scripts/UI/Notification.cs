@@ -37,8 +37,8 @@ public class Notification : MonoBehaviour
 
     private const float FadeTime = 0.25f;
     private const float HoldTime = 3.5f;
-    private const float PanelW   = 440f;
-    private const float PanelH   = 110f;
+    private const float PanelW   = 520f;
+    private const float PanelH   = 280f;
 
     void Awake()
     {
@@ -73,6 +73,10 @@ public class Notification : MonoBehaviour
         panelButton ??= AddPanelButton();
         while (queue.Count > 0)
         {
+            // Attendre que le menu Evolution soit fermé avant d'afficher
+            while (SkillTreeMenuUI.IsOpen)
+                yield return null;
+
             Entry e = queue.Dequeue();
             titleText.text   = e.title;
             messageText.text = e.message;
@@ -149,37 +153,42 @@ public class Notification : MonoBehaviour
 
         canvasGroup = panel.AddComponent<CanvasGroup>();
 
-        // Title (top half)
+        // Title (top ~30%)
         GameObject titleGO = new GameObject("Title");
         titleGO.transform.SetParent(panel.transform, false);
         RectTransform titleRT = titleGO.AddComponent<RectTransform>();
-        titleRT.anchorMin = new Vector2(0f, 0.5f);
+        titleRT.anchorMin = new Vector2(0f, 0.72f);
         titleRT.anchorMax = new Vector2(1f, 1f);
         titleRT.offsetMin = new Vector2(12f, 0f);
-        titleRT.offsetMax = new Vector2(-12f, -6f);
+        titleRT.offsetMax = new Vector2(-12f, -8f);
         titleText = titleGO.AddComponent<TextMeshProUGUI>();
-        titleText.fontSize  = 20f;
-        titleText.fontStyle = FontStyles.Bold;
-        titleText.alignment = TextAlignmentOptions.Center;
-        titleText.color     = Color.white;
-        titleText.enableAutoSizing  = false;
-        titleText.enableWordWrapping = false;
-        titleText.overflowMode = TextOverflowModes.Ellipsis;
+        titleText.fontSize           = 22f;
+        titleText.fontStyle          = FontStyles.Bold;
+        titleText.alignment          = TextAlignmentOptions.Center;
+        titleText.color              = Color.white;
+        titleText.enableAutoSizing   = true;
+        titleText.fontSizeMin        = 14f;
+        titleText.fontSizeMax        = 22f;
+        titleText.enableWordWrapping = true;
+        titleText.overflowMode       = TextOverflowModes.Overflow;
 
-        // Message (bottom half)
+        // Message (bottom ~70%)
         GameObject msgGO = new GameObject("Message");
         msgGO.transform.SetParent(panel.transform, false);
         RectTransform msgRT = msgGO.AddComponent<RectTransform>();
         msgRT.anchorMin = new Vector2(0f, 0f);
-        msgRT.anchorMax = new Vector2(1f, 0.5f);
-        msgRT.offsetMin = new Vector2(14f, 6f);
-        msgRT.offsetMax = new Vector2(-14f, 0f);
+        msgRT.anchorMax = new Vector2(1f, 0.72f);
+        msgRT.offsetMin = new Vector2(14f, 8f);
+        msgRT.offsetMax = new Vector2(-14f, -4f);
         messageText = msgGO.AddComponent<TextMeshProUGUI>();
-        messageText.fontSize  = 15f;
-        messageText.fontStyle = FontStyles.Normal;
-        messageText.alignment = TextAlignmentOptions.Center;
-        messageText.color     = Color.white;
+        messageText.fontSize           = 15f;
+        messageText.fontStyle          = FontStyles.Normal;
+        messageText.alignment          = TextAlignmentOptions.Center;
+        messageText.color              = Color.white;
+        messageText.enableAutoSizing   = true;
+        messageText.fontSizeMin        = 9f;
+        messageText.fontSizeMax        = 15f;
         messageText.enableWordWrapping = true;
-        messageText.overflowMode = TextOverflowModes.Truncate;
+        messageText.overflowMode       = TextOverflowModes.Overflow;
     }
 }

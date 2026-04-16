@@ -19,12 +19,14 @@ public class GameManager : MonoBehaviour
     public Virus virus;
     public VirusType currentVirusType = VirusType.Cacastellaire;
     public int currentTurn = 0;
+    public long initialWorldPopulation = 0;
     private float timeSinceLastTurn = 0f;
     private float simulationSpeed = 1f;  // Tours par seconde
     private bool isPaused = false;  // État de pause de la simulation
     private GameState gameState = GameState.Playing;  // État du jeu
     private PointManager pointManager;
     private SkillTreeManager skillTreeManager;
+    private int vaccineCompletedTurnsRemaining = -1; // -1 = pas encore déclenché
 
 
     void Start()
@@ -33,7 +35,46 @@ public class GameManager : MonoBehaviour
         InitializePointManager();
         // Initialiser SkillTreeManager
         InitializeSkillTreeManager();
-        // Laisser le joueur choisir son virus, puis initialiser le jeu
+        // Afficher le menu principal, puis laisser le joueur choisir son virus
+        MainMenuUI.Show(() =>
+        {
+            VirusSelectionPanel.Show((chosenType, chosenCountry) =>
+            {
+                currentVirusType = chosenType;
+                InitializeGame(chosenCountry);
+                CommandManager.Initialize(this);
+            });
+        });
+    }
+
+    public void Restart()
+    {
+        // Reset static services
+        TransmissionService.Reset();
+        VaccineService.Reset();
+        CountryManager.Reset();
+        TransmissionSkillTree.Reset();
+        MortaliteSkillTree.Reset();
+
+        // Reset game fields
+        currentTurn = 0;
+        timeSinceLastTurn = 0f;
+        simulationSpeed = 1f;
+        isPaused = false;
+        gameState = GameState.Playing;
+        vaccineCompletedTurnsRemaining = -1;
+        countries.Clear();
+        virus = null;
+
+        // Reset managers
+        pointManager.Initialize();
+        skillTreeManager.Initialize(pointManager, this);
+
+        // Reset EventManager
+        if (EventManager.Instance != null)
+            EventManager.Instance.InitializeEvents(this);
+
+        // Show selection screen again
         VirusSelectionPanel.Show((chosenType, chosenCountry) =>
         {
             currentVirusType = chosenType;
@@ -121,11 +162,63 @@ public class GameManager : MonoBehaviour
         // Initialiser les frontières et liaisons entre pays
         BorderManager.Initialize();
 
-        // Créer le virus
-        virus = new Virus("COVID-20", 0.10f, 0.05f, 0.8f, 0.8f);
+        virus = currentVirusType switch
+        {
+            // La Crottance — virus polyvalent et équilibré, bonne résistance au froid
+            VirusType.Classique => new Virus("La Crottance",
+                infectivity:    0.12f,
+                lethality:      0.00f,
+                coldResistance: 0.70f,
+                heatResistance: 0.45f)
+            {
+                hygieneExploitation = 0.08f,
+                wealthExploitation  = 0.06f,
+            },
+
+            // Cacastellaire — excellent en aérien/international, mais fragile à la chaleur
+            VirusType.Cacastellaire => new Virus("Cacastellaire",
+                infectivity:    0.15f,
+                lethality:      0.00f,
+                coldResistance: 0.55f,
+                heatResistance: 0.20f)
+            {
+                airborneModifier = 0.12f,
+                seaModifier      = 0.06f,
+                landModifier     = 0.04f,
+            },
+
+            // Nano Caca — très létal et furtif, mais se propage lentement
+            VirusType.NanoCaca => new Virus("Nano Caca",
+                infectivity:    0.07f,
+                lethality:      0.1f,
+                coldResistance: 0.50f,
+                heatResistance: 0.50f)
+            {
+                drugResistance  = 0.15f,
+                immunityBypass  = 0.10f,
+            },
+
+            // Fongi-Caca — propagation lente mais résistant aux médicaments, prospère dans les zones chaudes/humides
+            VirusType.FongiCaca => new Virus("Fongi-Caca",
+                infectivity:    0.08f,
+                lethality:      0.00f,
+                coldResistance: 0.30f,
+                heatResistance: 0.80f)
+            {
+                drugResistance      = 0.25f,
+                hygieneExploitation = 0.12f,
+                infectionGrowthMultiplier = 0.05f,
+            },
+
+            _ => new Virus("La Crottance", 0.12f, 0.05f, 0.70f, 0.45f),
+        };
     
         // Récupérer les pays depuis le CountryManager
         countries = CountryManager.GetAllCountries();
+
+        // Mémoriser la population mondiale initiale (avant toute mort)
+        initialWorldPopulation = 0;
+        foreach (var c in countries) initialWorldPopulation += c.population.total;
 
         // Infecter le pays choisi comme patient 0
         var patientZero = countries.Find(c => c.name.Equals(patientZeroCountry, System.StringComparison.OrdinalIgnoreCase));
@@ -137,7 +230,6 @@ public class GameManager : MonoBehaviour
         virus.isVaccineResearchActive = false;
 
         Debug.Log($"=== JEU COMMENCÉ === Patient 0 : {patientZeroCountry}");
-        PrintStatus();
 
         if (EventManager.Instance != null)
             EventManager.Instance.InitializeEvents(this);
@@ -148,15 +240,34 @@ public class GameManager : MonoBehaviour
     public void SimulateTurn()
     {
         currentTurn++;
-        Debug.Log($"\n>>> SIMULATION DU TOUR {currentTurn} <<<");
         TransmissionService.SimulateSpread(countries, virus);
         TransmissionService.SimulateInterCountrySpread(countries);
         TransmissionService.SimulateMortality(countries, virus);
         VaccineService.SimulatePreparation(countries, virus);
-        int newVaccinated = VaccineService.SimulateSpread(countries, virus);
-        if (newVaccinated > 0)
+        VaccineService.SimulateSpread(countries, virus);
+
+        long totalInfected = TransmissionService.GetTotalInfected(countries);
+        long totalDead     = TransmissionService.GetTotalDead(countries);
+
+        // Compte à rebours vaccin 100%
+        if (virus.isVaccineResearchActive && virus.vaccinePreparationProgress >= virus.VaccineMaxProgress)
         {
-            Debug.Log($"  [Vaccin] +{newVaccinated} vaccinés ce tour (préparation: {virus.vaccinePreparationProgress:F1}%)");
+            if (vaccineCompletedTurnsRemaining < 0)
+            {
+                vaccineCompletedTurnsRemaining = 5;
+                if (Notification.Instance != null)
+                    Notification.Instance.Show("Vaccin finalisé !", "Le vaccin contre le virus est prêt. Il va être distribué en urgence à travers le monde entier pour sauver l'humanité.");
+            }
+
+            vaccineCompletedTurnsRemaining--;
+
+            if (vaccineCompletedTurnsRemaining <= 0)
+            {
+                gameState = GameState.Healed;
+                string virusName    = currentVirusType.ToString();
+                EndScreenUI.Show(GameState.Healed, virusName, currentTurn, totalDead, totalInfected);
+                return;
+            }
         }
 
         // Event evaluation (generic event system)
@@ -177,8 +288,6 @@ public class GameManager : MonoBehaviour
         PrintStatus();
         
         // Générer les points passifs basés sur infections et morts
-        long totalInfected = TransmissionService.GetTotalInfected(countries);
-        long totalDead     = TransmissionService.GetTotalDead(countries);
         if (pointManager != null)
         {
             pointManager.GeneratePoints(totalInfected, totalDead);
@@ -196,28 +305,14 @@ public class GameManager : MonoBehaviour
         CheckGameConditions();
     }
 
-    public void PrintStatus()
-    {
-        Debug.Log($"\n--- TOUR {currentTurn} ---");
-        Debug.Log($"Virus: {virus}");
-        
-        foreach (CountryObject country in countries)
-        {
-            Debug.Log(country);
-        }
-
-        long totalInfected   = TransmissionService.GetTotalInfected(countries);
-        long totalDead        = TransmissionService.GetTotalDead(countries);
-        long totalVaccinated  = VaccineService.GetTotalVaccinated(countries);
-        Debug.Log($"\nTOTAL: Infectés = {totalInfected} | Morts = {totalDead} | Vaccinés = {totalVaccinated} | Préparation vaccin = {virus.vaccinePreparationProgress:F1}%");
-    }
+    public void PrintStatus() { }
 
     // === CONDITIONS DE VICTOIRE/DÉFAITE ===
 
     private void CheckGameConditions()
     {
         if (gameState != GameState.Playing)
-            return;  // Déjà fini, ne rien faire
+            return;
 
         long totalInfected  = TransmissionService.GetTotalInfected(countries);
         long totalDead       = TransmissionService.GetTotalDead(countries);
@@ -225,28 +320,23 @@ public class GameManager : MonoBehaviour
         long totalPopulation = GetTotalPopulation();
         long totalAlive      = totalPopulation - totalDead;
 
-        // FIN VACCIN: campagne terminée, toute la population vivante est vaccinée.
-        if (totalAlive > 0 && totalVaccinated >= totalAlive)
+        GameState newState = GameState.Playing;
+
+        // Healed est géré par le compte à rebours vaccin dans SimulateTurn
+        if (totalDead >= initialWorldPopulation)
         {
-            gameState = GameState.Healed;
-            Debug.Log("\n=== DÉFAITE! Le vaccin a sauvé toute la population vivante. ===");
-            return;
+            newState = GameState.Victory;
+        }
+        else if (totalInfected == 0 && totalAlive > 0)
+        {
+            newState = GameState.Defeat;
         }
 
-        // VICTOIRE: Tout le monde est mort
-        if (totalAlive == 0)
+        if (newState != GameState.Playing)
         {
-            gameState = GameState.Victory;
-            Debug.Log("\n=== VICTOIRE! Toute la population est décédée! ===");
-            return;
-        }
-
-        // DÉFAITE: Plus d'infectés mais il y a des vivants
-        if (totalInfected == 0 && totalAlive > 0)
-        {
-            gameState = GameState.Defeat;
-            Debug.Log($"\n=== DÉFAITE! Le virus s'est éteint. {totalAlive} personnes ont survécu. ===");
-            return;
+            gameState = newState;
+            string virusName = currentVirusType.ToString();
+            EndScreenUI.Show(newState, virusName, currentTurn, totalDead, totalInfected);
         }
     }
 

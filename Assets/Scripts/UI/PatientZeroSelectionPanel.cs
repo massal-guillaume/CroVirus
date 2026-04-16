@@ -68,7 +68,7 @@ public class PatientZeroSelectionPanel : MonoBehaviour
         titleRT.sizeDelta        = new Vector2(0f, 44f);
         titleRT.anchoredPosition = new Vector2(0f, -12f);
         TextMeshProUGUI titleTxt = titleGO.AddComponent<TextMeshProUGUI>();
-        titleTxt.text      = "CHOISISSEZ LE PAYS CIBLE";
+        titleTxt.text      = LocalizationManager.Get("pz_title");
         titleTxt.fontSize  = 14f;
         titleTxt.fontStyle = FontStyles.Bold;
         titleTxt.alignment = TextAlignmentOptions.Center;
@@ -224,7 +224,7 @@ public class PatientZeroSelectionPanel : MonoBehaviour
         confirmLabelRT.offsetMin = Vector2.zero;
         confirmLabelRT.offsetMax = Vector2.zero;
         TextMeshProUGUI confirmTxt = confirmLabelGO.AddComponent<TextMeshProUGUI>();
-        confirmTxt.text      = "CONFIRMER";
+        confirmTxt.text      = LocalizationManager.Get("pz_btn_confirm");
         confirmTxt.fontSize  = 13f;
         confirmTxt.fontStyle = FontStyles.Bold;
         confirmTxt.color     = Color.white;

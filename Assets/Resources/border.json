@@ -1,0 +1,3004 @@
+{
+  "borders": [
+    {
+      "from": "France",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "France",
+      "to": "Belgium",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "France",
+      "to": "Switzerland",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "France",
+      "to": "Luxembourg",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Germany",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Germany",
+      "to": "Netherlands",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Germany",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Germany",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.0021
+    },
+    {
+      "from": "Italy",
+      "to": "San Marino",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Italy",
+      "to": "Vatican",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Spain",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Spain",
+      "to": "Portugal",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Poland",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Poland",
+      "to": "Czechia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Netherlands",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Netherlands",
+      "to": "Belgium",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Belgium",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Belgium",
+      "to": "Netherlands",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Sweden",
+      "to": "Norway",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Sweden",
+      "to": "Finland",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Norway",
+      "to": "Sweden",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Norway",
+      "to": "Finland",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Denmark",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Denmark",
+      "to": "Sweden",
+      "type": "Boat",
+      "strength": 0.000743
+    },
+    {
+      "from": "Finland",
+      "to": "Sweden",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Finland",
+      "to": "Norway",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Switzerland",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Switzerland",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Austria",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Austria",
+      "to": "Switzerland",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Portugal",
+      "to": "Spain",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Portugal",
+      "to": "Brazil",
+      "type": "Airplane",
+      "strength": 0.00067
+    },
+    {
+      "from": "Czechia",
+      "to": "Germany",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Czechia",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Hungary",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Hungary",
+      "to": "Slovakia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Romania",
+      "to": "Hungary",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Romania",
+      "to": "Bulgaria",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Ukraine",
+      "to": "Poland",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Ukraine",
+      "to": "Slovakia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Greece",
+      "to": "Bulgaria",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Greece",
+      "to": "North Macedonia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Serbia",
+      "to": "Hungary",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Serbia",
+      "to": "Romania",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Croatia",
+      "to": "Slovenia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Croatia",
+      "to": "Hungary",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Slovakia",
+      "to": "Czechia",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Slovakia",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Bulgaria",
+      "to": "Greece",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Bulgaria",
+      "to": "Romania",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Belarus",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Belarus",
+      "to": "Poland",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Albania",
+      "to": "Greece",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Albania",
+      "to": "North Macedonia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Bosnia and Herz.",
+      "to": "Croatia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Bosnia and Herz.",
+      "to": "Serbia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "North Macedonia",
+      "to": "Serbia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "North Macedonia",
+      "to": "Bulgaria",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Montenegro",
+      "to": "Serbia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Montenegro",
+      "to": "Croatia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Moldova",
+      "to": "Romania",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Moldova",
+      "to": "Ukraine",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Lithuania",
+      "to": "Latvia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Lithuania",
+      "to": "Poland",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Latvia",
+      "to": "Lithuania",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Latvia",
+      "to": "Estonia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Estonia",
+      "to": "Latvia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Estonia",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Luxembourg",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Luxembourg",
+      "to": "Belgium",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Kosovo",
+      "to": "Serbia",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Kosovo",
+      "to": "North Macedonia",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "San Marino",
+      "to": "Italy",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Monaco",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Monaco",
+      "to": "Italy",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Andorra",
+      "to": "Spain",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Andorra",
+      "to": "France",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Liechtenstein",
+      "to": "Switzerland",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Liechtenstein",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Slovenia",
+      "to": "Italy",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Slovenia",
+      "to": "Austria",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Russia",
+      "to": "Belarus",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Russia",
+      "to": "Kazakhstan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "China",
+      "to": "Mongolia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "China",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "China",
+      "to": "Kazakhstan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "China",
+      "to": "Laos",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "India",
+      "to": "Nepal",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "India",
+      "to": "Bangladesh",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Indonesia",
+      "to": "Malaysia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Indonesia",
+      "to": "Papua New Guinea",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Pakistan",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Pakistan",
+      "to": "Iran",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Bangladesh",
+      "to": "India",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Bangladesh",
+      "to": "Myanmar",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Vietnam",
+      "to": "Laos",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Vietnam",
+      "to": "Cambodia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Thailand",
+      "to": "Malaysia",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Thailand",
+      "to": "Laos",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Myanmar",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Myanmar",
+      "to": "Laos",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Malaysia",
+      "to": "Singapore",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Malaysia",
+      "to": "Thailand",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Uzbekistan",
+      "to": "Kazakhstan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Uzbekistan",
+      "to": "Kyrgyzstan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Kazakhstan",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Kazakhstan",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Afghanistan",
+      "to": "Pakistan",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Afghanistan",
+      "to": "Iran",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Tajikistan",
+      "to": "Uzbekistan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Tajikistan",
+      "to": "Kyrgyzstan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Kyrgyzstan",
+      "to": "Uzbekistan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Kyrgyzstan",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Turkmenistan",
+      "to": "Kazakhstan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Turkmenistan",
+      "to": "Uzbekistan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Azerbaijan",
+      "to": "Georgia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Azerbaijan",
+      "to": "Iran",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Armenia",
+      "to": "Georgia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Armenia",
+      "to": "Iran",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Georgia",
+      "to": "Turkey",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Georgia",
+      "to": "Azerbaijan",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Mongolia",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Mongolia",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Singapore",
+      "to": "Malaysia",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Singapore",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001833
+    },
+    {
+      "from": "Cambodia",
+      "to": "Thailand",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Cambodia",
+      "to": "Vietnam",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Laos",
+      "to": "Vietnam",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Laos",
+      "to": "Thailand",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Nepal",
+      "to": "India",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Nepal",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "North Korea",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "North Korea",
+      "to": "Russia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Hong Kong",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Hong Kong",
+      "to": "Macao",
+      "type": "Boat",
+      "strength": 0.00069
+    },
+    {
+      "from": "Bhutan",
+      "to": "India",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Bhutan",
+      "to": "China",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Brunei",
+      "to": "Malaysia",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Brunei",
+      "to": "Singapore",
+      "type": "Airplane",
+      "strength": 0.0013
+    },
+    {
+      "from": "Saudi Arabia",
+      "to": "Bahrain",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Saudi Arabia",
+      "to": "Kuwait",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Turkey",
+      "to": "Greece",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Turkey",
+      "to": "Bulgaria",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Iran",
+      "to": "Turkey",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Iran",
+      "to": "Azerbaijan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Iraq",
+      "to": "Kuwait",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Iraq",
+      "to": "Turkey",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Israel",
+      "to": "Jordan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Israel",
+      "to": "Egypt",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Jordan",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Jordan",
+      "to": "Israel",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Lebanon",
+      "to": "Syria",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Lebanon",
+      "to": "Israel",
+      "type": "Car",
+      "strength": 0.000533
+    },
+    {
+      "from": "Syria",
+      "to": "Lebanon",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Syria",
+      "to": "Turkey",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Yemen",
+      "to": "Oman",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Yemen",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Kuwait",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Kuwait",
+      "to": "Iraq",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "United Arab Emirates",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "United Arab Emirates",
+      "to": "Oman",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Qatar",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Qatar",
+      "to": "United Arab Emirates",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Oman",
+      "to": "United Arab Emirates",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Oman",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Bahrain",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Bahrain",
+      "to": "Qatar",
+      "type": "Boat",
+      "strength": 0.00053
+    },
+    {
+      "from": "Palestine",
+      "to": "Jordan",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Palestine",
+      "to": "Israel",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Nigeria",
+      "to": "Cameroon",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Nigeria",
+      "to": "Benin",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Ethiopia",
+      "to": "Djibouti",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Ethiopia",
+      "to": "Kenya",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Dem. Rep. Congo",
+      "to": "Congo",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Dem. Rep. Congo",
+      "to": "Uganda",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Tanzania",
+      "to": "Kenya",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Tanzania",
+      "to": "Uganda",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "South Africa",
+      "to": "Lesotho",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "South Africa",
+      "to": "Botswana",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Kenya",
+      "to": "Uganda",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Kenya",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Algeria",
+      "to": "Tunisia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Algeria",
+      "to": "Morocco",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Sudan",
+      "to": "Egypt",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Sudan",
+      "to": "Libya",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Uganda",
+      "to": "Kenya",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Uganda",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Morocco",
+      "to": "W. Sahara",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Morocco",
+      "to": "Algeria",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Angola",
+      "to": "Namibia",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Angola",
+      "to": "Zambia",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Mozambique",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Mozambique",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Ghana",
+      "to": "Côte d'Ivoire",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Ghana",
+      "to": "Togo",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Cameroon",
+      "to": "Nigeria",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Cameroon",
+      "to": "Gabon",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Côte d'Ivoire",
+      "to": "Ghana",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Côte d'Ivoire",
+      "to": "Burkina Faso",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Niger",
+      "to": "Nigeria",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Niger",
+      "to": "Chad",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Mali",
+      "to": "Senegal",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Mali",
+      "to": "Guinea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Malawi",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Malawi",
+      "to": "Mozambique",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Burkina Faso",
+      "to": "Côte d'Ivoire",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Burkina Faso",
+      "to": "Mali",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Zambia",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Zambia",
+      "to": "Malawi",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Senegal",
+      "to": "Gambia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Senegal",
+      "to": "Mauritania",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Chad",
+      "to": "Sudan",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Chad",
+      "to": "Niger",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Somalia",
+      "to": "Djibouti",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Somalia",
+      "to": "Ethiopia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Zimbabwe",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Zimbabwe",
+      "to": "Zambia",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Guinea",
+      "to": "Senegal",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Guinea",
+      "to": "Guinea-Bissau",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Rwanda",
+      "to": "Uganda",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Rwanda",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Benin",
+      "to": "Togo",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Benin",
+      "to": "Nigeria",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Tunisia",
+      "to": "Algeria",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Tunisia",
+      "to": "Libya",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "S. Sudan",
+      "to": "Sudan",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "S. Sudan",
+      "to": "Ethiopia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Egypt",
+      "to": "Saudi Arabia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Egypt",
+      "to": "Libya",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Togo",
+      "to": "Ghana",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Togo",
+      "to": "Benin",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Sierra Leone",
+      "to": "Guinea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Sierra Leone",
+      "to": "Liberia",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Libya",
+      "to": "Egypt",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Libya",
+      "to": "Tunisia",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Liberia",
+      "to": "Sierra Leone",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Liberia",
+      "to": "Guinea",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Central African Rep.",
+      "to": "Congo",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Central African Rep.",
+      "to": "Chad",
+      "type": "Car",
+      "strength": 0.000867
+    },
+    {
+      "from": "Congo",
+      "to": "Gabon",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Congo",
+      "to": "Dem. Rep. Congo",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Eritrea",
+      "to": "Djibouti",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Eritrea",
+      "to": "Ethiopia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Mauritania",
+      "to": "Senegal",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Mauritania",
+      "to": "Morocco",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Gabon",
+      "to": "Cameroon",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Gabon",
+      "to": "Congo",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Gambia",
+      "to": "Senegal",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Botswana",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Botswana",
+      "to": "Namibia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Namibia",
+      "to": "Botswana",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Namibia",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Guinea-Bissau",
+      "to": "Senegal",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Guinea-Bissau",
+      "to": "Guinea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Lesotho",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Eq. Guinea",
+      "to": "Cameroon",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Eq. Guinea",
+      "to": "Gabon",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Djibouti",
+      "to": "Ethiopia",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Djibouti",
+      "to": "Eritrea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "eSwatini",
+      "to": "South Africa",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "eSwatini",
+      "to": "Mozambique",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Somaliland",
+      "to": "Djibouti",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Somaliland",
+      "to": "Ethiopia",
+      "type": "Car",
+      "strength": 0.000867
+    },
+    {
+      "from": "W. Sahara",
+      "to": "Morocco",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "W. Sahara",
+      "to": "Mauritania",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Burundi",
+      "to": "Rwanda",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Burundi",
+      "to": "Tanzania",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "United States of America",
+      "to": "Canada",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "United States of America",
+      "to": "Mexico",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "United States of America",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.0021
+    },
+    {
+      "from": "United States of America",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.0021
+    },
+    {
+      "from": "Canada",
+      "to": "United States of America",
+      "type": "Car",
+      "strength": 0.01
+    },
+    {
+      "from": "Canada",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.001833
+    },
+    {
+      "from": "Mexico",
+      "to": "United States of America",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Mexico",
+      "to": "Guatemala",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Guatemala",
+      "to": "Mexico",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Guatemala",
+      "to": "Honduras",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Honduras",
+      "to": "Guatemala",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Honduras",
+      "to": "El Salvador",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "El Salvador",
+      "to": "Guatemala",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "El Salvador",
+      "to": "Honduras",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Nicaragua",
+      "to": "Costa Rica",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Nicaragua",
+      "to": "Honduras",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Costa Rica",
+      "to": "Panama",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Costa Rica",
+      "to": "Nicaragua",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Panama",
+      "to": "Costa Rica",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Panama",
+      "to": "Colombia",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Haiti",
+      "to": "Dominican Rep.",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Haiti",
+      "to": "Cuba",
+      "type": "Boat",
+      "strength": 0.00037
+    },
+    {
+      "from": "Dominican Rep.",
+      "to": "Haiti",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Dominican Rep.",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.0013
+    },
+    {
+      "from": "Belize",
+      "to": "Mexico",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Belize",
+      "to": "Guatemala",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Sint Maarten",
+      "to": "St-Martin",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "Sint Maarten",
+      "to": "Anguilla",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "St-Martin",
+      "to": "Sint Maarten",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "St-Martin",
+      "to": "Anguilla",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Brazil",
+      "to": "Uruguay",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Brazil",
+      "to": "Argentina",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Argentina",
+      "to": "Chile",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Argentina",
+      "to": "Uruguay",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Colombia",
+      "to": "Ecuador",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Colombia",
+      "to": "Brazil",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Chile",
+      "to": "Argentina",
+      "type": "Car",
+      "strength": 0.003533
+    },
+    {
+      "from": "Chile",
+      "to": "Peru",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Peru",
+      "to": "Ecuador",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Peru",
+      "to": "Chile",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Venezuela",
+      "to": "Colombia",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Venezuela",
+      "to": "Brazil",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Ecuador",
+      "to": "Colombia",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Ecuador",
+      "to": "Peru",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Bolivia",
+      "to": "Peru",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Bolivia",
+      "to": "Chile",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Paraguay",
+      "to": "Argentina",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Paraguay",
+      "to": "Brazil",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Uruguay",
+      "to": "Argentina",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Uruguay",
+      "to": "Brazil",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "Guyana",
+      "to": "Suriname",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Guyana",
+      "to": "Venezuela",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Suriname",
+      "to": "Guyana",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Suriname",
+      "to": "Fr. Guiana",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Fr. Guiana",
+      "to": "Suriname",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Fr. Guiana",
+      "to": "Brazil",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Australia",
+      "to": "Papua New Guinea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Australia",
+      "to": "New Zealand",
+      "type": "Airplane",
+      "strength": 0.000777
+    },
+    {
+      "from": "Papua New Guinea",
+      "to": "Indonesia",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "Vatican",
+      "to": "Italy",
+      "type": "Car",
+      "strength": 0.004867
+    },
+    {
+      "from": "Siachen Glacier",
+      "to": "India",
+      "type": "Car",
+      "strength": 0.0002
+    },
+    {
+      "from": "Siachen Glacier",
+      "to": "Pakistan",
+      "type": "Car",
+      "strength": 0.0002
+    },
+    {
+      "from": "United Kingdom",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.0021
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Canada",
+      "type": "Airplane",
+      "strength": 0.001967
+    },
+    {
+      "from": "Japan",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001967
+    },
+    {
+      "from": "Japan",
+      "to": "Taiwan",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "South Korea",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001833
+    },
+    {
+      "from": "Iceland",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.001567
+    },
+    {
+      "from": "Puerto Rico",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001567
+    },
+    {
+      "from": "Philippines",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001433
+    },
+    {
+      "from": "Philippines",
+      "to": "Palau",
+      "type": "Airplane",
+      "strength": 0.000245
+    },
+    {
+      "from": "Jamaica",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001433
+    },
+    {
+      "from": "Bermuda",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001433
+    },
+    {
+      "from": "Ireland",
+      "to": "United Kingdom",
+      "type": "Boat",
+      "strength": 0.0014
+    },
+    {
+      "from": "Cayman Is.",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.0013
+    },
+    {
+      "from": "Martinique",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.0013
+    },
+    {
+      "from": "Martinique",
+      "to": "Dominica",
+      "type": "Boat",
+      "strength": 0.000259
+    },
+    {
+      "from": "Guadeloupe",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.0013
+    },
+    {
+      "from": "Guernsey",
+      "to": "United Kingdom",
+      "type": "Boat",
+      "strength": 0.0012
+    },
+    {
+      "from": "Jersey",
+      "to": "United Kingdom",
+      "type": "Boat",
+      "strength": 0.0012
+    },
+    {
+      "from": "Bahamas",
+      "to": "United States of America",
+      "type": "Boat",
+      "strength": 0.0012
+    },
+    {
+      "from": "Bahamas",
+      "to": "Turks and Caicos Is.",
+      "type": "Boat",
+      "strength": 0.000334
+    },
+    {
+      "from": "Trinidad and Tobago",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001167
+    },
+    {
+      "from": "Trinidad and Tobago",
+      "to": "Grenada",
+      "type": "Boat",
+      "strength": 0.000296
+    },
+    {
+      "from": "Barbados",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.001167
+    },
+    {
+      "from": "Fr. Polynesia",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.001167
+    },
+    {
+      "from": "Fr. Polynesia",
+      "to": "Pitcairn Is.",
+      "type": "Boat",
+      "strength": 0.00011
+    },
+    {
+      "from": "Isle of Man",
+      "to": "United Kingdom",
+      "type": "Boat",
+      "strength": 0.0011
+    },
+    {
+      "from": "Madagascar",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.001033
+    },
+    {
+      "from": "Madagascar",
+      "to": "Comoros",
+      "type": "Boat",
+      "strength": 0.000222
+    },
+    {
+      "from": "Seychelles",
+      "to": "United Arab Emirates",
+      "type": "Airplane",
+      "strength": 0.001033
+    },
+    {
+      "from": "Antigua and Barb.",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.001033
+    },
+    {
+      "from": "Antigua and Barb.",
+      "to": "St. Kitts and Nevis",
+      "type": "Boat",
+      "strength": 0.000259
+    },
+    {
+      "from": "Marshall Is.",
+      "to": "United States of America",
+      "type": "Airplane",
+      "strength": 0.001033
+    },
+    {
+      "from": "Falkland Is.",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.0009
+    },
+    {
+      "from": "New Zealand",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.000777
+    },
+    {
+      "from": "New Zealand",
+      "to": "Cook Is.",
+      "type": "Airplane",
+      "strength": 0.00032
+    },
+    {
+      "from": "Macao",
+      "to": "Hong Kong",
+      "type": "Boat",
+      "strength": 0.00069
+    },
+    {
+      "from": "Br. Indian Ocean Ter.",
+      "to": "United Kingdom",
+      "type": "Airplane",
+      "strength": 0.000633
+    },
+    {
+      "from": "Taiwan",
+      "to": "Japan",
+      "type": "Airplane",
+      "strength": 0.000617
+    },
+    {
+      "from": "Malta",
+      "to": "Italy",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "Åland",
+      "to": "Finland",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "U.S. Virgin Is.",
+      "to": "Puerto Rico",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "U.S. Virgin Is.",
+      "to": "British Virgin Is.",
+      "type": "Boat",
+      "strength": 0.000408
+    },
+    {
+      "from": "British Virgin Is.",
+      "to": "U.S. Virgin Is.",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "N. Mariana Is.",
+      "to": "Guam",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "Guam",
+      "to": "N. Mariana Is.",
+      "type": "Boat",
+      "strength": 0.000583
+    },
+    {
+      "from": "Guam",
+      "to": "Micronesia",
+      "type": "Boat",
+      "strength": 0.000259
+    },
+    {
+      "from": "Cyprus",
+      "to": "Greece",
+      "type": "Boat",
+      "strength": 0.00053
+    },
+    {
+      "from": "Curaçao",
+      "to": "Aruba",
+      "type": "Boat",
+      "strength": 0.00053
+    },
+    {
+      "from": "Maldives",
+      "to": "India",
+      "type": "Airplane",
+      "strength": 0.00051
+    },
+    {
+      "from": "Aruba",
+      "to": "Netherlands",
+      "type": "Airplane",
+      "strength": 0.00051
+    },
+    {
+      "from": "Aruba",
+      "to": "Curaçao",
+      "type": "Boat",
+      "strength": 0.000371
+    },
+    {
+      "from": "Fiji",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.00051
+    },
+    {
+      "from": "Fiji",
+      "to": "Tuvalu",
+      "type": "Airplane",
+      "strength": 0.00017
+    },
+    {
+      "from": "N. Cyprus",
+      "to": "Turkey",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Faeroe Is.",
+      "to": "Denmark",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Sri Lanka",
+      "to": "India",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "St-Barthélémy",
+      "to": "Sint Maarten",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Turks and Caicos Is.",
+      "to": "Bahamas",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Anguilla",
+      "to": "Sint Maarten",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "St. Pierre and Miquelon",
+      "to": "Canada",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Samoa",
+      "to": "American Samoa",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "American Samoa",
+      "to": "Samoa",
+      "type": "Boat",
+      "strength": 0.000477
+    },
+    {
+      "from": "Greenland",
+      "to": "Canada",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "Mauritius",
+      "to": "South Africa",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "Cabo Verde",
+      "to": "Portugal",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "Cuba",
+      "to": "Mexico",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "Cook Is.",
+      "to": "New Zealand",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "New Caledonia",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "New Caledonia",
+      "to": "Wallis and Futuna Is.",
+      "type": "Airplane",
+      "strength": 0.000208
+    },
+    {
+      "from": "Grenada",
+      "to": "Trinidad and Tobago",
+      "type": "Boat",
+      "strength": 0.000423
+    },
+    {
+      "from": "Saint Lucia",
+      "to": "Barbados",
+      "type": "Boat",
+      "strength": 0.000423
+    },
+    {
+      "from": "Saint Lucia",
+      "to": "St. Vin. and Gren.",
+      "type": "Boat",
+      "strength": 0.000296
+    },
+    {
+      "from": "St. Vin. and Gren.",
+      "to": "Saint Lucia",
+      "type": "Boat",
+      "strength": 0.000423
+    },
+    {
+      "from": "Vanuatu",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.000403
+    },
+    {
+      "from": "Tonga",
+      "to": "New Zealand",
+      "type": "Airplane",
+      "strength": 0.000403
+    },
+    {
+      "from": "Dominica",
+      "to": "Martinique",
+      "type": "Boat",
+      "strength": 0.00037
+    },
+    {
+      "from": "St. Kitts and Nevis",
+      "to": "Antigua and Barb.",
+      "type": "Boat",
+      "strength": 0.00037
+    },
+    {
+      "from": "Montserrat",
+      "to": "Antigua and Barb.",
+      "type": "Boat",
+      "strength": 0.00037
+    },
+    {
+      "from": "Micronesia",
+      "to": "Guam",
+      "type": "Boat",
+      "strength": 0.00037
+    },
+    {
+      "from": "Fr. S. Antarctic Lands",
+      "to": "France",
+      "type": "Airplane",
+      "strength": 0.000367
+    },
+    {
+      "from": "Timor-Leste",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.00035
+    },
+    {
+      "from": "Solomon Is.",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.00035
+    },
+    {
+      "from": "Palau",
+      "to": "Philippines",
+      "type": "Airplane",
+      "strength": 0.00035
+    },
+    {
+      "from": "Niue",
+      "to": "New Zealand",
+      "type": "Airplane",
+      "strength": 0.00035
+    },
+    {
+      "from": "Norfolk Island",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.00035
+    },
+    {
+      "from": "Comoros",
+      "to": "Madagascar",
+      "type": "Boat",
+      "strength": 0.000317
+    },
+    {
+      "from": "São Tomé and Principe",
+      "to": "Gabon",
+      "type": "Boat",
+      "strength": 0.000317
+    },
+    {
+      "from": "S. Geo. and the Is.",
+      "to": "United Kingdom",
+      "type": "Boat",
+      "strength": 0.0003
+    },
+    {
+      "from": "Nauru",
+      "to": "Australia",
+      "type": "Airplane",
+      "strength": 0.000297
+    },
+    {
+      "from": "Wallis and Futuna Is.",
+      "to": "New Caledonia",
+      "type": "Airplane",
+      "strength": 0.000297
+    },
+    {
+      "from": "Saint Helena",
+      "to": "South Africa",
+      "type": "Boat",
+      "strength": 0.000263
+    },
+    {
+      "from": "Ashmore and Cartier Is.",
+      "to": "Australia",
+      "type": "Boat",
+      "strength": 0.000263
+    },
+    {
+      "from": "Kiribati",
+      "to": "Fiji",
+      "type": "Airplane",
+      "strength": 0.000243
+    },
+    {
+      "from": "Tuvalu",
+      "to": "Fiji",
+      "type": "Airplane",
+      "strength": 0.000243
+    },
+    {
+      "from": "Indian Ocean Ter.",
+      "to": "Australia",
+      "type": "Boat",
+      "strength": 0.00021
+    },
+    {
+      "from": "Pitcairn Is.",
+      "to": "Fr. Polynesia",
+      "type": "Boat",
+      "strength": 0.000157
+    },
+    {
+      "from": "Antarctica",
+      "to": "Argentina",
+      "type": "Boat",
+      "strength": 0.000157
+    },
+    {
+      "from": "Heard I. and McDonald Is.",
+      "to": "Australia",
+      "type": "Boat",
+      "strength": 0.000157
+    },
+    {
+      "from": "Congo",
+      "to": "Central African Rep.",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "United States of America",
+      "to": "Jamaica",
+      "type": "Airplane",
+      "strength": 0.001003
+    },
+    {
+      "from": "Gabon",
+      "to": "São Tomé and Principe",
+      "type": "Boat",
+      "strength": 0.000317
+    },
+    {
+      "from": "Uzbekistan",
+      "to": "Tajikistan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "South Africa",
+      "to": "eSwatini",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Isle of Man",
+      "type": "Boat",
+      "strength": 0.00077
+    },
+    {
+      "from": "Turkey",
+      "to": "N. Cyprus",
+      "type": "Boat",
+      "strength": 0.000334
+    },
+    {
+      "from": "United Arab Emirates",
+      "to": "Seychelles",
+      "type": "Airplane",
+      "strength": 0.000723
+    },
+    {
+      "from": "South Africa",
+      "to": "Mauritius",
+      "type": "Airplane",
+      "strength": 0.000329
+    },
+    {
+      "from": "Switzerland",
+      "to": "Liechtenstein",
+      "type": "Car",
+      "strength": 0.004533
+    },
+    {
+      "from": "Italy",
+      "to": "Malta",
+      "type": "Boat",
+      "strength": 0.000408
+    },
+    {
+      "from": "France",
+      "to": "Monaco",
+      "type": "Car",
+      "strength": 0.0042
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Iceland",
+      "type": "Airplane",
+      "strength": 0.001097
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Guernsey",
+      "type": "Boat",
+      "strength": 0.00084
+    },
+    {
+      "from": "New Zealand",
+      "to": "Niue",
+      "type": "Airplane",
+      "strength": 0.000245
+    },
+    {
+      "from": "Ethiopia",
+      "to": "S. Sudan",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "United States of America",
+      "to": "Cayman Is.",
+      "type": "Airplane",
+      "strength": 0.00091
+    },
+    {
+      "from": "Fiji",
+      "to": "Kiribati",
+      "type": "Airplane",
+      "strength": 0.00017
+    },
+    {
+      "from": "Malaysia",
+      "to": "Brunei",
+      "type": "Car",
+      "strength": 0.0032
+    },
+    {
+      "from": "Denmark",
+      "to": "Faeroe Is.",
+      "type": "Boat",
+      "strength": 0.000334
+    },
+    {
+      "from": "Lebanon",
+      "to": "Cyprus",
+      "type": "Airplane",
+      "strength": 0.000457
+    },
+    {
+      "from": "Rwanda",
+      "to": "Burundi",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Australia",
+      "to": "Vanuatu",
+      "type": "Airplane",
+      "strength": 0.000286
+    },
+    {
+      "from": "Zambia",
+      "to": "Zimbabwe",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Mexico",
+      "to": "Belize",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Jersey",
+      "type": "Boat",
+      "strength": 0.00084
+    },
+    {
+      "from": "South Africa",
+      "to": "Saint Helena",
+      "type": "Boat",
+      "strength": 0.000184
+    },
+    {
+      "from": "Montenegro",
+      "to": "Bosnia and Herz.",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Georgia",
+      "to": "Armenia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Ireland",
+      "type": "Boat",
+      "strength": 0.0014
+    },
+    {
+      "from": "Argentina",
+      "to": "Paraguay",
+      "type": "Car",
+      "strength": 0.002867
+    },
+    {
+      "from": "China",
+      "to": "North Korea",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "India",
+      "to": "Sri Lanka",
+      "type": "Boat",
+      "strength": 0.000334
+    },
+    {
+      "from": "North Korea",
+      "to": "South Korea",
+      "type": "Car",
+      "strength": 0.0002
+    },
+    {
+      "from": "Pakistan",
+      "to": "Afghanistan",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Australia",
+      "to": "Nauru",
+      "type": "Airplane",
+      "strength": 0.000208
+    },
+    {
+      "from": "Cameroon",
+      "to": "Eq. Guinea",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Falkland Is.",
+      "type": "Airplane",
+      "strength": 0.00063
+    },
+    {
+      "from": "Oman",
+      "to": "Yemen",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Romania",
+      "to": "Moldova",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Australia",
+      "to": "Timor-Leste",
+      "type": "Airplane",
+      "strength": 0.000245
+    },
+    {
+      "from": "India",
+      "to": "Maldives",
+      "type": "Airplane",
+      "strength": 0.000371
+    },
+    {
+      "from": "United States of America",
+      "to": "Marshall Is.",
+      "type": "Airplane",
+      "strength": 0.000723
+    },
+    {
+      "from": "Spain",
+      "to": "Andorra",
+      "type": "Car",
+      "strength": 0.003867
+    },
+    {
+      "from": "Australia",
+      "to": "Heard I. and McDonald Is.",
+      "type": "Boat",
+      "strength": 0.00011
+    },
+    {
+      "from": "Australia",
+      "to": "Solomon Is.",
+      "type": "Airplane",
+      "strength": 0.000245
+    },
+    {
+      "from": "Finland",
+      "to": "Åland",
+      "type": "Boat",
+      "strength": 0.000408
+    },
+    {
+      "from": "Argentina",
+      "to": "Antarctica",
+      "type": "Boat",
+      "strength": 0.00011
+    },
+    {
+      "from": "Australia",
+      "to": "Indian Ocean Ter.",
+      "type": "Boat",
+      "strength": 0.000147
+    },
+    {
+      "from": "Bosnia and Herz.",
+      "to": "Montenegro",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Kosovo",
+      "to": "Albania",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Israel",
+      "to": "Palestine",
+      "type": "Car",
+      "strength": 0.0012
+    },
+    {
+      "from": "India",
+      "to": "Siachen Glacier",
+      "type": "Car",
+      "strength": 0.0002
+    },
+    {
+      "from": "New Zealand",
+      "to": "Tonga",
+      "type": "Airplane",
+      "strength": 0.000282
+    },
+    {
+      "from": "Djibouti",
+      "to": "Somalia",
+      "type": "Car",
+      "strength": 0.001533
+    },
+    {
+      "from": "Australia",
+      "to": "Norfolk Island",
+      "type": "Airplane",
+      "strength": 0.000245
+    },
+    {
+      "from": "United Kingdom",
+      "to": "Br. Indian Ocean Ter.",
+      "type": "Airplane",
+      "strength": 0.000443
+    },
+    {
+      "from": "France",
+      "to": "Fr. S. Antarctic Lands",
+      "type": "Airplane",
+      "strength": 0.000257
+    },
+    {
+      "from": "Chile",
+      "to": "Bolivia",
+      "type": "Car",
+      "strength": 0.002533
+    },
+    {
+      "from": "Canada",
+      "to": "St. Pierre and Miquelon",
+      "type": "Boat",
+      "strength": 0.000349
+    },
+    {
+      "from": "United Kingdom",
+      "to": "S. Geo. and the Is.",
+      "type": "Boat",
+      "strength": 0.00021
+    },
+    {
+      "from": "Australia",
+      "to": "Ashmore and Cartier Is.",
+      "type": "Boat",
+      "strength": 0.000184
+    },
+    {
+      "from": "Antigua and Barb.",
+      "to": "Montserrat",
+      "type": "Boat",
+      "strength": 0.000259
+    },
+    {
+      "from": "Ethiopia",
+      "to": "Somaliland",
+      "type": "Car",
+      "strength": 0.000867
+    },
+    {
+      "from": "Serbia",
+      "to": "Kosovo",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "United States of America",
+      "to": "Bermuda",
+      "type": "Airplane",
+      "strength": 0.001003
+    },
+    {
+      "from": "Portugal",
+      "to": "Cabo Verde",
+      "type": "Airplane",
+      "strength": 0.00032
+    },
+    {
+      "from": "Sint Maarten",
+      "to": "St-Barthélémy",
+      "type": "Boat",
+      "strength": 0.000334
+    },
+    {
+      "from": "India",
+      "to": "Bhutan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "Canada",
+      "to": "Greenland",
+      "type": "Airplane",
+      "strength": 0.00032
+    },
+    {
+      "from": "Namibia",
+      "to": "Angola",
+      "type": "Car",
+      "strength": 0.001867
+    },
+    {
+      "from": "Kazakhstan",
+      "to": "Turkmenistan",
+      "type": "Car",
+      "strength": 0.0022
+    },
+    {
+      "from": "France",
+      "to": "Guadeloupe",
+      "type": "Airplane",
+      "strength": 0.00091
+    }
+  ]
+}

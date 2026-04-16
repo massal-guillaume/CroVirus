@@ -24,9 +24,11 @@ public static class BorderManager
 
     public static void Initialize()
     {
-        if (initialized) return;
+        // Si déjà initialisé ET des frontières sont chargées, ne rien faire
+        if (initialized && borders.Count > 0) return;
 
         borders.Clear();
+        initialized = false;
 
         TextAsset jsonFile = Resources.Load<TextAsset>("border");
         if (jsonFile != null)
@@ -129,13 +131,13 @@ public static class BorderManager
         return result;
     }
 
-    private static void DebugPrintBorders()
+    public static void DebugPrintBorders()
     {
         Debug.Log("\n=== RÉSEAU DE FRONTIÈRES ===");
         foreach (CountryLink border in borders)
         {
             Debug.Log($"  {border}");
         }
-        Debug.Log("============================\n");
+        Debug.Log($"Total: {borders.Count} liaisons\n============================\n");
     }
 }

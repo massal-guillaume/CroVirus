@@ -14,12 +14,12 @@ public class VirusSelectionPanel : MonoBehaviour
     // ─── Données des continents ───────────────────────────────
     private struct ContinentEntry
     {
-        public string label; public Color color; public string[] countries;
-        public ContinentEntry(string l, Color c, string[] ctrs) { label = l; color = c; countries = ctrs; }
+        public string label; public string locKey; public Color color; public string[] countries;
+        public ContinentEntry(string l, string lk, Color c, string[] ctrs) { label = l; locKey = lk; color = c; countries = ctrs; }
     }
     private static readonly ContinentEntry[] ContinentData = new ContinentEntry[]
     {
-        new ContinentEntry("EUROPE", new Color(0.35f, 0.55f, 1.00f, 1f), new[] {
+        new ContinentEntry("EUROPE", "continent_europe", new Color(0.35f, 0.55f, 1.00f, 1f), new[] {
             "France","Germany","United Kingdom","Spain","Italy","Poland","Netherlands",
             "Belgium","Sweden","Norway","Denmark","Finland","Switzerland","Austria",
             "Portugal","Czechia","Hungary","Romania","Ukraine","Greece","Russia",
@@ -28,7 +28,7 @@ public class VirusSelectionPanel : MonoBehaviour
             "Luxembourg","Malta","Cyprus","Iceland","Ireland","Kosovo","San Marino",
             "Monaco","Andorra","Liechtenstein","N. Cyprus","Åland","Greenland",
             "Faeroe Is.","Guernsey","Jersey","Isle of Man" }),
-        new ContinentEntry("ASIE", new Color(1.00f, 0.65f, 0.15f, 1f), new[] {
+        new ContinentEntry("ASIE", "continent_asia", new Color(1.00f, 0.65f, 0.15f, 1f), new[] {
             "China","India","Japan","South Korea","Indonesia","Pakistan","Bangladesh",
             "Vietnam","Thailand","Myanmar","Malaysia","Philippines","Uzbekistan",
             "Kazakhstan","Afghanistan","Tajikistan","Kyrgyzstan","Turkmenistan",
@@ -37,7 +37,7 @@ public class VirusSelectionPanel : MonoBehaviour
             "Timor-Leste","Brunei","Maldives",
             "Saudi Arabia","Turkey","Iran","Iraq","Israel","Jordan","Lebanon",
             "Syria","Yemen","Kuwait","United Arab Emirates","Qatar","Oman","Bahrain","Palestine" }),
-        new ContinentEntry("AFRIQUE", new Color(0.95f, 0.50f, 0.08f, 1f), new[] {
+        new ContinentEntry("AFRIQUE", "continent_africa", new Color(0.95f, 0.50f, 0.08f, 1f), new[] {
             "Nigeria","Ethiopia","Dem. Rep. Congo","Tanzania","South Africa","Kenya",
             "Algeria","Sudan","Uganda","Morocco","Angola","Mozambique","Ghana",
             "Madagascar","Cameroon","Côte d'Ivoire","Niger","Mali","Malawi","Burkina Faso",
@@ -47,7 +47,7 @@ public class VirusSelectionPanel : MonoBehaviour
             "Botswana","Namibia","Guinea-Bissau","Lesotho","Eq. Guinea","Mauritius",
             "Djibouti","eSwatini","Cabo Verde","Comoros","Seychelles",
             "São Tomé and Principe","Somaliland","W. Sahara","Saint Helena" }),
-        new ContinentEntry("AMER. NORD", new Color(0.30f, 0.88f, 0.30f, 1f), new[] {
+        new ContinentEntry("AMER. NORD", "continent_northam", new Color(0.30f, 0.88f, 0.30f, 1f), new[] {
             "United States of America","Canada","Mexico","Guatemala","Honduras",
             "El Salvador","Nicaragua","Costa Rica","Panama","Cuba","Haiti",
             "Dominican Rep.","Jamaica","Trinidad and Tobago","Bahamas","Barbados",
@@ -56,15 +56,15 @@ public class VirusSelectionPanel : MonoBehaviour
             "British Virgin Is.","Aruba","Curaçao","Sint Maarten","St-Barthélémy",
             "St-Martin","Turks and Caicos Is.","Cayman Is.","Bermuda",
             "Montserrat","Anguilla","St. Pierre and Miquelon" }),
-        new ContinentEntry("AMER. SUD", new Color(0.55f, 0.90f, 0.18f, 1f), new[] {
+        new ContinentEntry("AMER. SUD", "continent_southam", new Color(0.55f, 0.90f, 0.18f, 1f), new[] {
             "Brazil","Argentina","Colombia","Chile","Peru","Venezuela","Ecuador",
             "Bolivia","Paraguay","Uruguay","Guyana","Suriname","Falkland Is." }),
-        new ContinentEntry("OCEANIE", new Color(0.20f, 0.78f, 0.95f, 1f), new[] {
+        new ContinentEntry("OCEANIE", "continent_oceania", new Color(0.20f, 0.78f, 0.95f, 1f), new[] {
             "Australia","New Zealand","Papua New Guinea","Fiji","Vanuatu","Solomon Is.",
             "Samoa","Tonga","Kiribati","Marshall Is.","Micronesia","Palau","Nauru",
             "Tuvalu","Cook Is.","New Caledonia","Fr. Polynesia","N. Mariana Is.","Guam",
             "American Samoa","Niue","Norfolk Island","Wallis and Futuna Is.","Pitcairn Is." }),
-        new ContinentEntry("AUTRES", new Color(0.55f, 0.55f, 0.55f, 1f), new[] {
+        new ContinentEntry("AUTRES", "continent_other", new Color(0.55f, 0.55f, 0.55f, 1f), new[] {
             "Antarctica","Vatican","Br. Indian Ocean Ter.","Fr. S. Antarctic Lands",
             "S. Geo. and the Is.","Ashmore and Cartier Is.","Heard I. and McDonald Is.",
             "Indian Ocean Ter.","Siachen Glacier" }),
@@ -73,38 +73,10 @@ public class VirusSelectionPanel : MonoBehaviour
     // ─── Données des virus ────────────────────────────────────
     private static readonly VirusEntry[] Entries = new VirusEntry[]
     {
-        new VirusEntry(
-            VirusType.Classique,
-            "La Crottance",
-            "Virus classique équilibré",
-            "Né dans les élevages industriels d'Europe de l'Est, La Crottance est le premier pathogène fécal à avoir franchi la barrière des espèces de manière stable. Sa structure ARN simple lui confère une remarquable adaptabilité climatique.\n\nTransmission directe par contact féco-oral. Faible létalité initiale mais progression inexorable.",
-            "Transmission équilibrée · Bonne résistance au froid · Forte progression rurale · Compatible avec tous les modes de transport · Idéal pour une première infection mondiale",
-            new Color(0.60f, 0.85f, 0.40f, 1f)
-        ),
-        new VirusEntry(
-            VirusType.Cacastellaire,
-            "Cacastellaire",
-            "Pathogène à dispersion atmosphérique",
-            "Découvert en orbite basse lors de la mission ISS-47, ce virus d'origine inconnue s'est adapté à la pression atmosphérique terrestre avec une efficacité inquiétante. Ses spores microscopiques survivent dans les systèmes de climatisation des aéronefs.\n\nSpécialiste de la transmission aérienne intercontinentale. Touche en priorité les pays à fort trafic aérien.",
-            "Excellente propagation aérienne · Bonus sur les transports internationaux · Forte résistance à la chaleur · Peut évoluer vers une dispersion stellaire · Cible les hubs aéroportuaires",
-            new Color(0.90f, 0.65f, 0.15f, 1f)
-        ),
-        new VirusEntry(
-            VirusType.NanoCaca,
-            "Nano Caca",
-            "Nano-pathogène furtif et létal",
-            "Résultat d'une expérience de bio-ingénierie militaire avortée, le Nano Caca est un agent pathogène de taille nanométrique capable de traverser les filtres HEPA standards. Indétectable par les tests sérologiques conventionnels pendant 14 jours.\n\nLétalité élevée, progression silencieuse. Les gouvernements ne réagissent pas avant qu'il soit trop tard.",
-            "Invisible aux systèmes de détection précoce · Létalité élevée · Traversée des barrières sanitaires · Résistance aux traitements antiviraux · Bonus sur les pays à haute technologie médicale",
-            new Color(0.30f, 0.70f, 1.00f, 1f)
-        ),
-        new VirusEntry(
-            VirusType.FongiCaca,
-            "Fongi-Caca",
-            "Mycose fongique à croissance lente",
-            "Mutant du Candida auris découvert dans les réseaux d'égouts de São Paulo, le Fongi-Caca prospère dans les environnements chauds et humides. Sa paroi cellulaire polysaccharidique le rend imperméable aux traitements antifongiques actuels.\n\nCroissance lente mais implacable. Une fois établi, il est impossible à éradiquer par les moyens conventionnels.",
-            "Résistance totale aux antifongiques · Prospère dans les zones tropicales · Contamination durable des infrastructures hydriques · Mutations aléatoires · Bonus dans les pays à faible hygiène",
-            new Color(0.80f, 0.35f, 0.90f, 1f)
-        ),
+        new VirusEntry(VirusType.Classique,    "classique",      new Color(0.60f, 0.85f, 0.40f, 1f)),
+        new VirusEntry(VirusType.Cacastellaire,"cacastellaire",  new Color(0.90f, 0.65f, 0.15f, 1f)),
+        new VirusEntry(VirusType.NanoCaca,     "nanocaca",       new Color(0.30f, 0.70f, 1.00f, 1f)),
+        new VirusEntry(VirusType.FongiCaca,    "fungicaca",      new Color(0.80f, 0.35f, 0.90f, 1f)),
     };
 
     // ─── Référence statique pour le chargement ────────────────
@@ -171,7 +143,7 @@ public class VirusSelectionPanel : MonoBehaviour
         }
 
         // Titre principal
-        GameObject titleGO = MakeText(_overlay, "VSP_Title", "CHOISISSEZ VOTRE VIRUS", 28f, FontStyles.Bold, Color.white,
+        GameObject titleGO = MakeText(_overlay, "VSP_Title", LocalizationManager.Get("vsp_title"), 28f, FontStyles.Bold, Color.white,
             new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -20f), new Vector2(0f, -60f), TextAlignmentOptions.Center);
 
         // ── Moitié haute : cartes virus ──────────────────────
@@ -218,13 +190,13 @@ public class VirusSelectionPanel : MonoBehaviour
             cardBtn.targetGraphic = cardImg;
 
             // Nom du virus — grand, centré, tout en haut
-            MakeText(card, "Name", entry.label, 28f, FontStyles.Bold, entry.color,
+            MakeText(card, "Name", LocalizationManager.Get("virus_name_" + entry.locKey), 28f, FontStyles.Bold, entry.color,
                 new Vector2(0f, 1f), new Vector2(1f, 1f),
                 new Vector2(8f, -70f), new Vector2(-8f, -10f),
                 TextAlignmentOptions.Center);
 
             // Tagline
-            MakeText(card, "Tagline", entry.tagline, 14f, FontStyles.Italic,
+            MakeText(card, "Tagline", LocalizationManager.Get("virus_tagline_" + entry.locKey), 14f, FontStyles.Italic,
                 new Color(0.75f, 0.75f, 0.75f, 1f),
                 new Vector2(0f, 1f), new Vector2(1f, 1f),
                 new Vector2(14f, -56f), new Vector2(-14f, -84f),
@@ -241,15 +213,15 @@ public class VirusSelectionPanel : MonoBehaviour
             sepRT.offsetMin = new Vector2(14f, -88f);
             sepRT.offsetMax = new Vector2(-14f, -90f);
 
-            // Description — offsetMin.y (-290) < offsetMax.y (-98) car ancre=haut → zone visible
-            MakeText(card, "Desc", entry.description, 14f, FontStyles.Normal,
+            // Description
+            MakeText(card, "Desc", LocalizationManager.Get("virus_desc_" + entry.locKey), 17f, FontStyles.Normal,
                 new Color(0.82f, 0.82f, 0.82f, 1f),
                 new Vector2(0f, 1f), new Vector2(1f, 1f),
-                new Vector2(14f, -290f), new Vector2(-14f, -98f),
+                new Vector2(14f, -310f), new Vector2(-14f, -98f),
                 TextAlignmentOptions.TopLeft, overflow: TextOverflowModes.Ellipsis);
 
             // Capacités
-            MakeText(card, "Caps", "►  " + entry.capabilities.Replace(" · ", "\n►  "), 11f, FontStyles.Normal,
+            MakeText(card, "Caps", "►  " + LocalizationManager.Get("virus_caps_" + entry.locKey).Replace(" · ", "\n►  "), 13f, FontStyles.Normal,
                 new Color(entry.color.r * 0.85f, entry.color.g * 0.85f, entry.color.b * 0.85f, 1f),
                 new Vector2(0f, 0f), new Vector2(1f, 0f),
                 new Vector2(14f, 10f), new Vector2(-14f, 165f),
@@ -283,7 +255,7 @@ public class VirusSelectionPanel : MonoBehaviour
             TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
 
         // Titre patient 0 (centré, grand)
-        MakeText(bottomHalf, "P0Title", "PAYS DU PATIENT 0", 24f, FontStyles.Bold, Color.white,
+        MakeText(bottomHalf, "P0Title", LocalizationManager.Get("vsp_patient0_title"), 24f, FontStyles.Bold, Color.white,
             new Vector2(0f, 1f), new Vector2(1f, 1f),
             new Vector2(0f, -38f), new Vector2(0f, -8f),
             TextAlignmentOptions.Center);
@@ -315,7 +287,7 @@ public class VirusSelectionPanel : MonoBehaviour
             cbBtn.onClick.AddListener(() => ShowContinentCountries(captured, cc));
             GameObject cbTxtGO = new GameObject("T"); cbTxtGO.transform.SetParent(cbGO.transform, false);
             TextMeshProUGUI cbTxt = cbTxtGO.AddComponent<TextMeshProUGUI>();
-            cbTxt.text = cd.label; cbTxt.fontSize = 10f; cbTxt.fontStyle = FontStyles.Bold;
+            cbTxt.text = LocalizationManager.Get(cd.locKey); cbTxt.fontSize = 10f; cbTxt.fontStyle = FontStyles.Bold;
             cbTxt.color = new Color(Mathf.Min(cc.r + 0.4f, 1f), Mathf.Min(cc.g + 0.4f, 1f), Mathf.Min(cc.b + 0.4f, 1f), 1f);
             cbTxt.alignment = TextAlignmentOptions.Center;
             RectTransform cbTxtRT = cbTxtGO.GetComponent<RectTransform>();
@@ -382,7 +354,7 @@ public class VirusSelectionPanel : MonoBehaviour
         GameObject startTextGO = new GameObject("Text");
         startTextGO.transform.SetParent(startGO.transform, false);
         _startButtonText = startTextGO.AddComponent<TextMeshProUGUI>();
-        _startButtonText.text = "Sélectionnez un virus et un pays";
+        _startButtonText.text = LocalizationManager.Get("vsp_btn_start_hint");
         _startButtonText.fontSize = 15f; _startButtonText.fontStyle = FontStyles.Bold;
         _startButtonText.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         _startButtonText.alignment = TextAlignmentOptions.Center;
@@ -480,7 +452,7 @@ public class VirusSelectionPanel : MonoBehaviour
         bool ready = _selectedVirus.HasValue && !string.IsNullOrEmpty(_selectedCountry);
         _startButton.interactable = ready;
         if (_startButtonText != null)
-            _startButtonText.text = ready ? "DÉMARRER L'INFECTION" : "Sélectionnez un virus et un pays";
+            _startButtonText.text = ready ? LocalizationManager.Get("vsp_btn_start_ready") : LocalizationManager.Get("vsp_btn_start_hint");
         if (_startButton.targetGraphic is Image img)
             img.color = ready ? new Color(0.75f, 0.12f, 0.12f, 1f) : new Color(0.35f, 0.35f, 0.35f, 1f);
     }
@@ -501,21 +473,38 @@ public class VirusSelectionPanel : MonoBehaviour
         // Remplacer l'overlay par loading screen
         Destroy(_overlay);
 
+        // Cacher TOUS les canvas existants pour que le fond opaque soit total
+        var allCanvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        var hiddenForLoading = new List<GameObject>();
+        foreach (var c in allCanvases)
+        {
+            if (c.gameObject == _canvas.gameObject) continue; // le nôtre, géré séparément
+            if (c.gameObject.activeSelf) { c.gameObject.SetActive(false); hiddenForLoading.Add(c.gameObject); }
+        }
+
+        // Canvas dédié loading, sortingOrder très haut
+        GameObject loadingCanvasGO = new GameObject("VSP_LoadingCanvas");
+        Canvas loadingCanvas = loadingCanvasGO.AddComponent<Canvas>();
+        loadingCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        loadingCanvas.sortingOrder = 999;
+        loadingCanvasGO.AddComponent<UnityEngine.UI.CanvasScaler>();
+        loadingCanvasGO.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+
         GameObject loadingGO = new GameObject("VSP_Loading");
-        loadingGO.transform.SetParent(_canvas.transform, false);
+        loadingGO.transform.SetParent(loadingCanvasGO.transform, false);
         Image loadBg = loadingGO.AddComponent<Image>();
-        loadBg.color = new Color(0.05f, 0.05f, 0.05f, 0.97f);
+        loadBg.color = new Color(0.05f, 0.05f, 0.05f, 1f);
         RectTransform loadRT = loadingGO.GetComponent<RectTransform>();
         loadRT.anchorMin = Vector2.zero; loadRT.anchorMax = Vector2.one;
         loadRT.offsetMin = Vector2.zero; loadRT.offsetMax = Vector2.zero;
 
         // Titre
-        MakeText(loadingGO, "LoadTitle", "GÉNÉRATION DU MONDE EN COURS", 22f, FontStyles.Bold, Color.white,
+        MakeText(loadingGO, "LoadTitle", LocalizationManager.Get("vsp_loading_title"), 22f, FontStyles.Bold, Color.white,
             new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
             new Vector2(0f, 36f), new Vector2(0f, 70f), TextAlignmentOptions.Center);
 
         // Sous-titre
-        MakeText(loadingGO, "LoadSub", "Cartographie mondiale en cours de rendu...", 13f, FontStyles.Italic,
+        MakeText(loadingGO, "LoadSub", LocalizationManager.Get("vsp_loading_sub"), 13f, FontStyles.Italic,
             new Color(0.6f, 0.6f, 0.6f, 1f),
             new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
             new Vector2(0f, 8f), new Vector2(0f, 34f), TextAlignmentOptions.Center);
@@ -526,10 +515,10 @@ public class VirusSelectionPanel : MonoBehaviour
         Image barBgImg = barBg.AddComponent<Image>();
         barBgImg.color = new Color(0.2f, 0.2f, 0.2f, 1f);
         RectTransform barBgRT = barBg.GetComponent<RectTransform>();
-        barBgRT.anchorMin = new Vector2(0.15f, 0.5f);
-        barBgRT.anchorMax = new Vector2(0.85f, 0.5f);
-        barBgRT.offsetMin = new Vector2(0f, -22f);
-        barBgRT.offsetMax = new Vector2(0f, -6f);
+        barBgRT.anchorMin = new Vector2(0.1f, 0.5f);
+        barBgRT.anchorMax = new Vector2(0.9f, 0.5f);
+        barBgRT.offsetMin = new Vector2(0f, -28f);
+        barBgRT.offsetMax = new Vector2(0f,  0f);
 
         // Barre de progression (fill)
         GameObject barFill = new GameObject("BarFill");
@@ -543,15 +532,17 @@ public class VirusSelectionPanel : MonoBehaviour
         fillRT.anchorMin = Vector2.zero; fillRT.anchorMax = Vector2.one;
         fillRT.offsetMin = Vector2.zero; fillRT.offsetMax = Vector2.zero;
 
-        // Label pourcentage
-        TextMeshProUGUI pctLabel = MakeText(loadingGO, "Pct", "0%", 12f, FontStyles.Bold,
-            new Color(0.75f, 0.75f, 0.75f, 1f),
-            new Vector2(0f, 0.5f), new Vector2(1f, 0.5f),
-            new Vector2(0f, -28f), new Vector2(0f, -8f), TextAlignmentOptions.Center)
+        // Label pourcentage — centré à l'intérieur de la barre
+        TextMeshProUGUI pctLabel = MakeText(barBg, "Pct", "0%", 15f, FontStyles.Bold,
+            Color.white,
+            Vector2.zero, Vector2.one,
+            Vector2.zero, Vector2.zero, TextAlignmentOptions.Center)
             .GetComponent<TextMeshProUGUI>();
 
         // Attendre que le chargement soit terminé
         GeoJsonLoader loader = FindAnyObjectByType<GeoJsonLoader>();
+        // Déclencher le chargement maintenant (pas au Start)
+        if (loader != null) loader.StartLoading();
         while (loader == null || !loader.IsLoaded)
         {
             float progress = loader != null ? loader.LoadProgress : 0f;
@@ -566,8 +557,11 @@ public class VirusSelectionPanel : MonoBehaviour
         // Courte pause pour que le joueur voit 100%
         yield return new WaitForSeconds(0.4f);
 
-        Destroy(loadingGO);
-        // Re-activer exactement les canvas qu'on avait cachés
+        Destroy(loadingCanvasGO);
+        // Restaurer les canvas cachés pour le loading
+        foreach (var go in hiddenForLoading)
+            if (go != null) go.SetActive(true);
+        // Re-activer exactement les canvas qu'on avait cachés (VirusSelectionPanel)
         foreach (var go in _hiddenCanvases)
             if (go != null) go.SetActive(true);
         _hiddenCanvases.Clear();
@@ -621,15 +615,12 @@ public class VirusSelectionPanel : MonoBehaviour
     private class VirusEntry
     {
         public VirusType type;
-        public string label;
-        public string tagline;
-        public string description;
-        public string capabilities;
+        public string locKey;
         public Color color;
 
-        public VirusEntry(VirusType t, string l, string tag, string desc, string caps, Color c)
+        public VirusEntry(VirusType t, string lk, Color c)
         {
-            type = t; label = l; tagline = tag; description = desc; capabilities = caps; color = c;
+            type = t; locKey = lk; color = c;
         }
     }
 }

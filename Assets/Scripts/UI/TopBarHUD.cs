@@ -25,7 +25,7 @@ public class TopBarHUD : MonoBehaviour
 
     private const float PANEL_W        = 260f;
     private const float PANEL_H_FULL   = 148f;
-    private const float PANEL_H_HEADER = 52f;
+    private const float PANEL_H_HEADER = 30f;
 
     private static readonly Color colorBg        = new Color(0.08f, 0.08f, 0.10f, 0.93f);
     private static readonly Color colorHeader    = new Color(0.11f, 0.11f, 0.15f, 1f);
@@ -85,7 +85,7 @@ public class TopBarHUD : MonoBehaviour
 
         // ── Étage 1 – Header : bouton cacher (pleine largeur) ──────────────
         var r1 = Row(panelGO.transform, "R1_Header", 0f, 1f, 1f - headerFrac, 1f, colorHeader);
-        var toggleBtn = MakeButton(r1.transform, "ToggleBtn", "v Cacher",
+        var toggleBtn = MakeButton(r1.transform, "ToggleBtn", LocalizationManager.Get("hud_btn_hide"),
             new Vector2(0.02f, 0.05f), new Vector2(0.98f, 0.95f),
             OnToggleClicked, colorBtnBase, 11f);
         toggleLabel = toggleBtn.GetComponentInChildren<TextMeshProUGUI>();
@@ -94,7 +94,7 @@ public class TopBarHUD : MonoBehaviour
         var r2 = Row(panelGO.transform, "R2_Day", 0f, 1f, 0.52f, 1f - headerFrac, Color.clear);
         daysText = MakeText(r2.transform, "DaysTxt",
             new Vector2(0.05f, 0f), new Vector2(0.95f, 1f),
-            "Jour 0", 26, FontStyles.Bold, TextAlignmentOptions.Midline);
+            string.Format(LocalizationManager.Get("hud_day_label"), 0), 26, FontStyles.Bold, TextAlignmentOptions.Midline);
         daysText.color = colorText;
 
         // ── Étage 3 – Date calendrier ─────────────────────────────────────
@@ -105,13 +105,13 @@ public class TopBarHUD : MonoBehaviour
 
         // ── Étage 4 – Contrôles vitesse ───────────────────────────────────
         var r4 = Row(panelGO.transform, "R4_Speed", 0f, 1f, 0.02f, 0.37f, Color.clear);
-        slowButton   = MakeButton(r4.transform, "SlowBtn",   "<< Lent",
+        slowButton   = MakeButton(r4.transform, "SlowBtn",   LocalizationManager.Get("hud_btn_slow"),
             new Vector2(0.02f, 0.12f), new Vector2(0.25f, 0.88f), OnSlowClicked,   colorBtnBase,  11f);
-        normalButton = MakeButton(r4.transform, "NormalBtn", "Normal",
+        normalButton = MakeButton(r4.transform, "NormalBtn", LocalizationManager.Get("hud_btn_normal"),
             new Vector2(0.27f, 0.12f), new Vector2(0.50f, 0.88f), OnNormalClicked, colorBtnHi,    11f);
-        pauseButton  = MakeButton(r4.transform, "PauseBtn",  "|| Pause",
+        pauseButton  = MakeButton(r4.transform, "PauseBtn",  LocalizationManager.Get("hud_btn_pause"),
             new Vector2(0.52f, 0.12f), new Vector2(0.74f, 0.88f), OnPauseClicked,  colorBtnPause, 11f);
-        fastButton   = MakeButton(r4.transform, "FastBtn",   ">> Vite",
+        fastButton   = MakeButton(r4.transform, "FastBtn",   LocalizationManager.Get("hud_btn_fast"),
             new Vector2(0.76f, 0.12f), new Vector2(0.98f, 0.88f), OnFastClicked,   colorBtnBase,  11f);
         pauseButtonLabel = pauseButton.GetComponentInChildren<TextMeshProUGUI>();
 
@@ -133,8 +133,13 @@ public class TopBarHUD : MonoBehaviour
             if (child.name != "R1_Header")
                 child.gameObject.SetActive(isVisible);
         }
+        // Hide panel background when collapsed — only the blue button stays visible
+        var bgImage = mainPanelRT.GetComponent<Image>();
+        if (bgImage != null) bgImage.enabled = isVisible;
+
         mainPanelRT.sizeDelta = new Vector2(PANEL_W, isVisible ? PANEL_H_FULL : PANEL_H_HEADER);
-        toggleLabel.text = isVisible ? "v Cacher" : "^ Afficher";
+        toggleLabel.text = isVisible ? LocalizationManager.Get("hud_btn_hide") : LocalizationManager.Get("hud_btn_show");
+        toggleLabel.fontSize = isVisible ? 10f : 14f;
         SetButtonColor(toggleLabel.GetComponentInParent<Button>(),
             isVisible ? colorBtnBase : colorBtnHi);
     }
@@ -145,7 +150,7 @@ public class TopBarHUD : MonoBehaviour
     {
         int turn = gameManager.currentTurn;
         DateTime current = startDate.AddDays(turn);
-        daysText.text = $"Jour {turn}";
+        daysText.text = string.Format(LocalizationManager.Get("hud_day_label"), turn);
         dateText.text = current.ToString("dd MMM yyyy").ToUpper();
     }
 
@@ -153,7 +158,7 @@ public class TopBarHUD : MonoBehaviour
     {
         bool paused = gameManager.IsPaused();
         float speed = gameManager.GetSimulationSpeed();
-        pauseButtonLabel.text = paused ? "> Reprendre" : "|| Pause";
+        pauseButtonLabel.text = paused ? LocalizationManager.Get("hud_btn_resume") : LocalizationManager.Get("hud_btn_pause");
         SetButtonColor(pauseButton,  paused ? colorBtnResume : colorBtnPause);
         SetButtonColor(slowButton,   (!paused && Mathf.Approximately(speed, SPEED_SLOW))   ? colorBtnHi : colorBtnBase);
         SetButtonColor(normalButton, (!paused && Mathf.Approximately(speed, SPEED_NORMAL)) ? colorBtnHi : colorBtnBase);

@@ -33,6 +33,9 @@ public static class CommandManager
             case "/normal":
                 SetNormalSpeed();
                 break;
+            case "/borders":
+                BorderManager.DebugPrintBorders();
+                break;
             default:
                 Debug.LogWarning($"Commande inconnue: {command}");
                 break;

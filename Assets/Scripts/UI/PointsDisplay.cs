@@ -52,8 +52,11 @@ public class PointsDisplay : MonoBehaviour
     private void UpdatePointsDisplay()
     {
         int currentPoints = pointManager.GetCurrentPoints();
-        pointsText.text = $"<b>Crotogènes: {currentPoints}</b>";
-        pointsText.fontStyle = FontStyles.Bold;
-    }
+        string label = string.Format(LocalizationManager.Get("points_label"), currentPoints);
+        pointsText.text = $"<b>{label}</b>";
+        pointsText.fontStyle = FontStyles.Bold;        pointsText.enableAutoSizing = true;
+        pointsText.fontSizeMin = 6f;
+        pointsText.fontSizeMax = 24f;
+        pointsText.enableWordWrapping = true;    }
 }
 

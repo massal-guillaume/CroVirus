@@ -24,9 +24,10 @@ public class InfectionClickBonus : MonoBehaviour
 
     private readonly HashSet<string> notified = new HashSet<string>();
     private readonly List<ActiveBonus> activeBonuses = new List<ActiveBonus>();
+    private readonly List<(CountryObject co, int turn)> pendingSpawns = new List<(CountryObject, int)>();
     private bool firstInfectionSkipped = false;
 
-    private const int   EXPIRE_TURNS = 20;
+    private const int   EXPIRE_TURNS = 8;
     private const float POPUP_W  = 100f;
     private const float POPUP_H  = 72f;   // corps du bubble
     private const float TAIL_SZ  = 14f;   // queue pointue en bas
@@ -75,10 +76,15 @@ public class InfectionClickBonus : MonoBehaviour
 
     void Update()
     {
+        bool menuOpen = SkillTreeMenuUI.IsOpen;
+
+        // (pending spawns are processed in CheckNewInfections at 5/turn)
+
         for (int i = activeBonuses.Count - 1; i >= 0; i--)
         {
             var b = activeBonuses[i];
             if (b.go == null) { activeBonuses.RemoveAt(i); continue; }
+            if (menuOpen) { b.go.SetActive(false); continue; }
             if (Cam == null) continue;
             Vector3 worldPos = b.countryRenderer != null
                 ? b.countryRenderer.bounds.center
@@ -102,13 +108,23 @@ public class InfectionClickBonus : MonoBehaviour
                 activeBonuses.RemoveAt(i);
             }
         }
+        // Queue all newly infected countries
         foreach (var co in countries)
         {
             if (co.population.infected > 0 && notified.Add(co.name))
             {
                 if (!firstInfectionSkipped) { firstInfectionSkipped = true; continue; }
-                SpawnButton(co, turn);
+                pendingSpawns.Add((co, turn));
             }
+        }
+
+        // Spawn up to 5 per turn (skip entirely if menu is open)
+        if (!SkillTreeMenuUI.IsOpen && pendingSpawns.Count > 0)
+        {
+            int toSpawn = Mathf.Min(5, pendingSpawns.Count);
+            for (int i = 0; i < toSpawn; i++)
+                SpawnButton(pendingSpawns[i].co, pendingSpawns[i].turn);
+            pendingSpawns.RemoveRange(0, toSpawn);
         }
     }
 
@@ -120,7 +136,7 @@ public class InfectionClickBonus : MonoBehaviour
         Country mapCountry = WorldMap.Instance.GetCountry(co.name);
         if (mapCountry == null) return;
 
-        int pts = Mathf.Max(2, Mathf.RoundToInt(Mathf.Log10(co.population.total + 1)));
+        int pts = 1;
 
         // Conteneur racine — pivot bas-centre pour pointer sur le pays
         var root = new GameObject("InfBonus_" + co.name);

@@ -10,9 +10,10 @@ public static class VaccineService
         if (virus == null || !virus.isVaccineResearchActive)
             return;
 
-        if (virus.vaccinePreparationProgress >= 100f)
+        float vaccineMax = virus.VaccineMaxProgress;
+        if (virus.vaccinePreparationProgress >= vaccineMax)
         {
-            virus.vaccinePreparationProgress = 100f;
+            virus.vaccinePreparationProgress = vaccineMax;
             return;
         }
 
@@ -29,12 +30,12 @@ public static class VaccineService
         float capacity = virus.vaccineCapacityMin + (1f - virus.vaccineCapacityMin) * Mathf.Pow(Mathf.Clamp01(aliveRatio), virus.vaccineCapacityGamma);
         float progressDelta = virus.vaccineBasePrepRate * virus.vaccineGlobalMultiplier * virus.vaccineEventMultiplier * virus.playerSabotageSlowdown * capacity;
 
-        virus.vaccinePreparationProgress = Mathf.Clamp(virus.vaccinePreparationProgress + progressDelta, 0f, 100f);
+        virus.vaccinePreparationProgress = Mathf.Clamp(virus.vaccinePreparationProgress + progressDelta, 0f, virus.VaccineMaxProgress);
     }
 
     public static int SimulateSpread(List<CountryObject> countries, Virus virus)
     {
-        if (virus == null || virus.vaccinePreparationProgress < 100f)
+        if (virus == null || virus.vaccinePreparationProgress < virus.VaccineMaxProgress)
             return 0;
 
         int  worldNewVaccinated = 0;
@@ -88,5 +89,10 @@ public static class VaccineService
         foreach (CountryObject country in countries)
             total += country.population.vaccinated;
         return total;
+    }
+
+    public static void Reset()
+    {
+        vaccinationDecimals.Clear();
     }
 }

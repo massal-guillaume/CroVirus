@@ -42,6 +42,8 @@ public class Virus
 
     public float pointGainMultiplier = 1.0f;            // Classique N3: multiplicateur de points
     public float vaccineMaxProgressMultiplier = 0f;     // Myco N3: plafond vaccin (0 = pas de plafond spécial)
+    /// <summary>Effective vaccine completion threshold (100 normally, 115 with myoN3).</summary>
+    public float VaccineMaxProgress => vaccineMaxProgressMultiplier > 0f ? 100f * vaccineMaxProgressMultiplier : 100f;
 
     public float crossBorderSpreadBonus = 0f;           // Cacastellaire N4B
     public float regionalSpreadBonus = 0f;              // Myco N4B
@@ -50,7 +52,7 @@ public class Virus
     // ─── VACCINE ENEMY SYSTEM ─────────────────────
     public bool isVaccineResearchActive = false;
     public float vaccinePreparationProgress = 0f;  // 0..100
-    public float vaccineBasePrepRate = 0.8333f;    // % par tour (100% en ~120 tours)
+    public float vaccineBasePrepRate = 0.65f;   // % par tour (100% en ~154 tours)
     public float vaccineSpreadRate = 0.012f;       // 1.2% des vivants non-vaccinés par tour
     public float vaccineGlobalMultiplier = 1f;
     public float vaccineEventMultiplier = 1f;

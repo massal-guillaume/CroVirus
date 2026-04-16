@@ -32,8 +32,8 @@ public class GeoJsonLoader : MonoBehaviour
         Instance = this;
     }
 
-    // Chargement démarre immédiatement en arrière-plan
-    void Start() => StartCoroutine(LoadGeoJson());
+    // Le chargement ne démarre PAS automatiquement — appeler StartLoading() explicitement
+    public void StartLoading() => StartCoroutine(LoadGeoJson());
 
     IEnumerator LoadGeoJson()
     {

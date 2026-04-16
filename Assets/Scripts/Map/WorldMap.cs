@@ -50,17 +50,6 @@ public class WorldMap : MonoBehaviour
 
     private void ShowCountryPopup(Country country)
     {
-        // Récupérer les données du pays depuis CountryManager
-        CountryObject countryData = CountryManager.GetCountry(country.countryName);
-        
-        if (countryData != null && CountryInfoPopup.Instance != null)
-        {
-            CountryInfoPopup.Instance.ShowCountryInfo(countryData);
-        }
-        else
-        {
-            Debug.LogWarning($"CountryData not found for '{country.countryName}' or CountryInfoPopup not in scene");
-        }
     }
 
     public void DeselectCurrent()

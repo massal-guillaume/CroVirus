@@ -95,7 +95,6 @@ public class PointManager : MonoBehaviour
         {
             currentPoints      += pts;
             totalPointsEarned  += pts;
-            Debug.Log($"  [POINTS passif] +{pts} pts (tous les {PASSIVE_INTERVAL} tours) | Total: {currentPoints}");
         }
     }
 
@@ -139,7 +138,6 @@ public class PointManager : MonoBehaviour
         int scaled = Mathf.RoundToInt(pts * pointMultiplier);
         currentPoints     += scaled;
         totalPointsEarned += scaled;
-        Debug.Log($"  [POINTS palier] +{scaled} pts — {label} | Total: {currentPoints}");
     }
 
     // ── Accesseurs ────────────────────────────────────────────────────────

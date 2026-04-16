@@ -54,12 +54,6 @@ public class CountryMapButton : MonoBehaviour
             Debug.LogWarning($"Country '{countryName}' not found!");
             return;
         }
-        if (CountryInfoPopup.Instance == null)
-        {
-            Debug.LogWarning("CountryInfoPopup not found in scene!");
-            return;
-        }
         Debug.Log($"Clicked: {country.name}");
-        CountryInfoPopup.Instance.ShowCountryInfo(country);
     }
 }

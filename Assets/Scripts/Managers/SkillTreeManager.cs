@@ -35,7 +35,6 @@ public class SkillTreeManager : MonoBehaviour
         this.gameManager = gameManager;
         unlockedSkills.Clear();
         
-        Debug.Log("SkillTreeManager initialized");
     }
     
     /// <summary>
@@ -62,13 +61,13 @@ public class SkillTreeManager : MonoBehaviour
             return false;
         }
         
-        // Check if can afford (DISABLED: all skills are free for testing)
-        // int currentPoints = pointManager.GetCurrentPoints();
-        // if (!skill.CanAfford(currentPoints))
-        // {
-        //     Debug.LogWarning($"Cannot afford skill {skillId}. Cost: {skill.cost}, Have: {currentPoints}");
-        //     return false;
-        // }
+        // Check if can afford
+        int currentPoints = pointManager.GetCurrentPoints();
+        if (!skill.CanAfford(currentPoints))
+        {
+            Debug.LogWarning($"Cannot afford skill {skillId}. Cost: {skill.cost}, Have: {currentPoints}");
+            return false;
+        }
         
         // Check if dependencies met
         if (!skill.CanUnlock(unlockedSkills))
@@ -81,8 +80,8 @@ public class SkillTreeManager : MonoBehaviour
         skill.isUnlocked = true;
         unlockedSkills.Add(skill);
         
-        // Spend points (DISABLED: all skills are free for testing)
-        // pointManager.SpendPoints(skill.cost);
+        // Spend points
+        pointManager.SpendPoints(skill.cost);
         
         // Apply effects to virus
         skill.ApplyToVirus(gameManager.virus);
@@ -104,8 +103,6 @@ public class SkillTreeManager : MonoBehaviour
         // Apply permanent point multiplier to PointManager
         if (skill.effects.ContainsKey("pointGainMultiplierPermanent") && pointManager != null)
             pointManager.ApplyPointMultiplier(gameManager.virus.pointGainMultiplier);
-
-        Debug.Log($"✅ Unlocked skill: {skill.name} (Cost: {skill.cost} pts)");
 
         return true;
     }
@@ -170,9 +167,8 @@ public class SkillTreeManager : MonoBehaviour
         if (available.Count == 0) return;
         Skill toUnlock = available[UnityEngine.Random.Range(0, available.Count)];
         UnlockSkill(toUnlock.id);
-        Debug.Log($"[AutoTransmission] Skill auto-débloqué: {toUnlock.name}");
         if (Notification.Instance != null)
-            Notification.Instance.Show("MUTATION VIRALE AUTONOME", toUnlock.name);
+            Notification.Instance.Show(LocalizationManager.Get("skill_buy_success_notif"), toUnlock.name);
     }
 
     /// <summary>
@@ -193,9 +189,8 @@ public class SkillTreeManager : MonoBehaviour
         if (available.Count == 0) return;
         Skill toUnlock = available[UnityEngine.Random.Range(0, available.Count)];
         UnlockSkill(toUnlock.id);
-        Debug.Log($"[AutoLethal] Skill mortalité débloqué: {toUnlock.name}");
         if (Notification.Instance != null)
-            Notification.Instance.Show("MUTATION VIRALE AUTONOME", toUnlock.name);
+            Notification.Instance.Show(LocalizationManager.Get("skill_buy_success_notif"), toUnlock.name);
     }
 
     private void TriggerDispersal(int countryCount)
@@ -223,7 +218,6 @@ public class SkillTreeManager : MonoBehaviour
         {
             uninfected[i].population.infected += 1;
             names.Add(uninfected[i].name);
-            Debug.Log($"[Dispersion Spatiale] {uninfected[i].name}: +1 infecté");
         }
 
         if (Notification.Instance != null && names.Count > 0)
@@ -251,7 +245,6 @@ public class SkillTreeManager : MonoBehaviour
         PatientZeroSelectionPanel.Show(candidates, target =>
         {
             target.population.infected = 1;
-            Debug.Log($"[Patient Zéro] Injecté dans {target.name}");
             if (Notification.Instance != null)
                 Notification.Instance.Show("💉 PATIENT ZÉRO", target.name);
         });
@@ -264,17 +257,8 @@ public class SkillTreeManager : MonoBehaviour
     {
         List<Skill> available = GetAvailableSkills();
         
-        if (available.Count == 0)
-        {
-            Debug.Log("No skills available for purchase");
-            return;
-        }
-        
-        Debug.Log($"📊 Available Skills ({available.Count}):");
-        foreach (Skill skill in available)
-        {
-            Debug.Log($"  - {skill.name} (Lvl {skill.level}) - Cost: {skill.cost} | {skill.description}");
-        }
+        if (available.Count == 0) return;
+        foreach (Skill skill in available) { _ = skill; }
     }
     
     /// <summary>
@@ -282,10 +266,6 @@ public class SkillTreeManager : MonoBehaviour
     /// </summary>
     public void PrintUnlockedSkills()
     {
-        Debug.Log($"🔓 Unlocked Skills ({unlockedSkills.Count}):");
-        foreach (Skill skill in unlockedSkills)
-        {
-            Debug.Log($"  ✅ {skill.name} (Lvl {skill.level})");
-        }
+        foreach (Skill skill in unlockedSkills) { _ = skill; }
     }
 }

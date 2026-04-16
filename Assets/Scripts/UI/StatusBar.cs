@@ -40,10 +40,14 @@ public class StatusBar : MonoBehaviour
         long totalInfected   = System.Math.Max(0L, GetTotalInfected());
         long totalDead       = System.Math.Max(0L, GetTotalDead());
         float vaccineProgress = GetVaccinePreparationPercent();
-        long totalHealthy = System.Math.Max(0L, totalPopulation - totalInfected - totalDead);
 
-        // Affichage robuste: si les donnees sont desynchronisees, on normalise sur le plus grand total coherent.
-        long displayTotal = System.Math.Max(totalPopulation, totalInfected + totalDead + totalHealthy);
+        // Utilise la population initiale comme référence fixe pour éviter que la barre des morts
+        // n'atteigne 100% tant qu'il reste des infectés.
+        long refPopulation = (gameManager != null && gameManager.initialWorldPopulation > 0)
+            ? gameManager.initialWorldPopulation
+            : System.Math.Max(1L, totalPopulation);
+        long totalHealthy = System.Math.Max(0L, refPopulation - totalInfected - totalDead);
+        long displayTotal = refPopulation;
 
         // FORCER LES COULEURS BLANCHES POUR TOUS LES TEXTES
         if (infectedText != null)
@@ -82,10 +86,10 @@ public class StatusBar : MonoBehaviour
         }
 
         // Afficher les stats à gauche et droite
-        infectedText.text = $"Infectés: {totalInfected:N0}";
+        infectedText.text = string.Format(LocalizationManager.Get("statusbar_infected"), $"{totalInfected:N0}");
         deadText.text = $"{totalDead:N0}";
         if (vaccineProgressText != null)
-            vaccineProgressText.text = $"Vaccin: {vaccineProgress:F1}%";
+            vaccineProgressText.text = string.Format(LocalizationManager.Get("statusbar_vaccine"), $"{vaccineProgress:F1}");
 
         if (vaccineProgressFill != null)
             vaccineProgressFill.fillAmount = Mathf.Clamp01(vaccineProgress / 100f);
@@ -234,7 +238,8 @@ public class StatusBar : MonoBehaviour
         if (gameManager == null || gameManager.virus == null)
             return 0f;
 
-        return Mathf.Clamp(gameManager.virus.vaccinePreparationProgress, 0f, 100f);
+        float vaccineMax = gameManager.virus.VaccineMaxProgress;
+        return Mathf.Clamp(gameManager.virus.vaccinePreparationProgress / vaccineMax * 100f, 0f, 100f);
     }
 
     private void AutoBindVaccineUiIfMissing()
